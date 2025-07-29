@@ -213,3 +213,35 @@ def ReadProjectFileForGenerateAttributes(ProjectFileName  # Имя файла п
             sep,  # Разделитель csv
             dec  # Десятичный разделитель
             )
+
+
+# Считывание файла пргоекта для выделения контрльных динамик
+def ReadProjectFileForSelectControlDynamics(ProjectFileName  # Имя файла проекта
+                                            ):
+    # Считываем файл проекта
+    with open(ProjectFileName, 'r') as ProjFileName:
+        ProjectsAttributes = js.load(ProjFileName)
+
+    # Считываем имена файлов
+    ParametersFileName = ProjectsAttributes["ParametersFileName"]  # Файл csv параметров
+    ModeAttributesFileName = ProjectsAttributes["ModeAttributesFileName"]  # Файл csv аттрибутов режима
+    ControlDynamicsFileName = ProjectsAttributes["ControlDynamicsFileName"]  # Файл csv параметров с контролтными динамиками
+
+    # Разделители csv
+    sep = ProjectsAttributes["sep"]  # Разделитель csv
+    dec = ProjectsAttributes["dec"]  # Десятичный разделитель
+
+    # Считываем файл аттрибутов режима
+    modeAttributes = pd.read_csv(ModeAttributesFileName, sep=sep, decimal=dec)
+
+    # Считываем файл параметров
+    parameters = pd.read_csv(ParametersFileName, sep=sep, decimal=dec)
+
+    # Выводим результат
+    return (modeAttributes,  # Аттрибуты режима
+            parameters,  # Параметры
+            sep,  # Разделитель csv
+            dec,  # Десятичный разделитель
+
+            ControlDynamicsFileName  # Имя файла csv параметров с контролтными динамиками
+            )
