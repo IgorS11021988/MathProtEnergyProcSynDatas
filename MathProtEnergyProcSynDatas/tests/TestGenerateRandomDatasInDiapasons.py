@@ -1,6 +1,6 @@
 import numpy as np
 
-from MathProtEnergyProcAug.DatasGenerate import GenerateRandomDatasInDiapasons
+from MathProtEnergyProcSynDatas.DatasGenerate import GenerateRandomDatasInDiapasons
 
 import unittest
 

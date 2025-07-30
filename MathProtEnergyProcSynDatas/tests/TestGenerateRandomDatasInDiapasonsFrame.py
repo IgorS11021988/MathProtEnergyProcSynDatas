@@ -1,7 +1,7 @@
 import numpy as np
 from pandas import DataFrame
 
-from MathProtEnergyProcAug.DatasGenerate import GenerateRandomDatasInDiapasonsFrame
+from MathProtEnergyProcSynDatas.DatasGenerate import GenerateRandomDatasInDiapasonsFrame
 
 import unittest
 
