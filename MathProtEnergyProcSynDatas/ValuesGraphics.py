@@ -1,3 +1,5 @@
+import os
+
 from matplotlib import pyplot as plt
 
 
@@ -49,3 +51,15 @@ def TimesValuesGraphics(times,  # Моменты времени
 
     # Добавляем легенду
     plt.legend(loc="best")
+
+
+# Формирование имени файла графиков
+def SaveGraphicsImage(imageDir,  # Директория изображения
+                      graphicName,  # Имя графика
+                      dynamicName  # Имя динамики
+                      ):
+    # Формируем полное имя изображения
+    fullImageName = os.path.join(imageDir, graphicName + dynamicName + ".jpg")
+    
+    # Сохраняем изображение
+    plt.savefig(fullImageName)
