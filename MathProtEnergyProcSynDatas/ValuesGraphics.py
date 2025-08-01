@@ -60,6 +60,6 @@ def SaveGraphicsImage(imageDir,  # Директория изображения
                       ):
     # Формируем полное имя изображения
     fullImageName = os.path.join(imageDir, graphicName + dynamicName + ".jpg")
-    
+
     # Сохраняем изображение
     plt.savefig(fullImageName)
