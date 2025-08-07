@@ -25,9 +25,7 @@ def SavedFinction(dyn, index,
 
     # Сохраняем данные в файл
     BuildGraphic = (buildingGraphics and np.any(index == indexesGraphics))  # Необходимость построения графика
-    if BuildGraphic:
-        print("Graphic dynamic index: ", index)
-    outputArrayCreate(dyn, fileName, sep, dec, plotGraphics=BuildGraphic)
+    outputArrayCreate(dyn, fileName, sep, dec, index, plotGraphics=BuildGraphic)
 
     # Возвращаем индекс
     return index
