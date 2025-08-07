@@ -14,11 +14,15 @@ def LinearTimesMoments(Tints,  # Времена интегрирования
     # Конечные моменты времени интегрирования
     tEnds = tBegins + Tints
 
+    # Векторизуемая функция временных диапазонов
+    def FunTs(ind):
+        return np.linspace(tBegins[ind], tEnds[ind], NPoints[ind])
+
     # Формируем список массивов времен интегрирования
     nListIntegrateTimes = len(Tints)  # Число элементов списка времен интегрирования
-    ts = []
-    for ind in range(nListIntegrateTimes):
-        ts.append(np.linspace(tBegins[ind], tEnds[ind], NPoints[ind]))
+    inds = np.arange(nListIntegrateTimes, dtype=np.int64)  # Массив индексов
+    vecFunTs = np.vectorize(FunTs, otypes=[np.ndarray])  # Векторизованная функция временных сеток
+    ts = vecFunTs(inds)  # Получаем список сеток
 
     # Выводим список массивов времен интегрирования
     return ts
