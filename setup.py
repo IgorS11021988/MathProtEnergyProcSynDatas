@@ -8,6 +8,7 @@ setup(name="MathProtEnergyProcSynDatas",
       description="Syntetic datas by modeling by mathematical prototiping method of energy process",
       packages=["MathProtEnergyProcSynDatas",
                 "MathProtEnergyProcSynDatas.DatasSyntetic",
+                "MathProtEnergyProcSynDatas.File",
                 "MathProtEnergyProcSynDatas.tests"],
       scripts=["testMathProtEnergyProcSynDatas.py"]
       )

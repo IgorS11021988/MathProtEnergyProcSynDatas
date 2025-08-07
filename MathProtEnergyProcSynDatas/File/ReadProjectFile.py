@@ -2,23 +2,8 @@ import numpy as np
 import pandas as pd
 import json as js
 
-from .DatasIndexes import IndexesGraphics
-from .DatasIntegrate import ConcatModelingParameters, IntegrateAttributes
-
-
-# Функция сохранения параметров
-def ParametersSave(dynamicCharacteristics,  # Индексы динамик
-                   Pars,  # Параметры
-                   ParametersFileName,  # Имя файла параметров
-
-                   sep,  # CSV разделитель
-                   dec  # Десятичный разделитель
-                   ):  # Сохранение параметров в файл
-    # Конкатенуем характеристики динамик к параметрам динамик
-    allDynamicDatas = pd.concat([Pars, dynamicCharacteristics], axis=1)  # Параметры для
-
-    # Сохраняем параметры в файл
-    allDynamicDatas.to_csv(ParametersFileName, sep=sep, decimal=dec, index=False)  # Сохраняем в csv файл
+from MathProtEnergyProcSynDatas.DatasIndexes import IndexesGraphics
+from MathProtEnergyProcSynDatas.DatasIntegrate import ConcatModelingParameters, IntegrateAttributes
 
 
 # Считывание файла проекта для моделирования

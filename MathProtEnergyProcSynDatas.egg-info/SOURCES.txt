@@ -4,7 +4,7 @@ testMathProtEnergyProcSynDatas.py
 MathProtEnergyProcSynDatas/DatasGenerate.py
 MathProtEnergyProcSynDatas/DatasIndexes.py
 MathProtEnergyProcSynDatas/DatasIntegrate.py
-MathProtEnergyProcSynDatas/File.py
+MathProtEnergyProcSynDatas/Indicate.py
 MathProtEnergyProcSynDatas/SystemStructure.py
 MathProtEnergyProcSynDatas/TimesMoments.py
 MathProtEnergyProcSynDatas/ValuesGraphics.py
@@ -19,5 +19,8 @@ MathProtEnergyProcSynDatas/DatasSyntetic/DatasSynteticQ.py
 MathProtEnergyProcSynDatas/DatasSyntetic/RandomGenerate.py
 MathProtEnergyProcSynDatas/DatasSyntetic/Save.py
 MathProtEnergyProcSynDatas/DatasSyntetic/__init__.py
+MathProtEnergyProcSynDatas/File/ReadProjectFile.py
+MathProtEnergyProcSynDatas/File/Save.py
+MathProtEnergyProcSynDatas/File/__init__.py
 MathProtEnergyProcSynDatas/tests/TestGenerateRandomDatasInDiapasons.py
 MathProtEnergyProcSynDatas/tests/TestGenerateRandomDatasInDiapasonsFrame.py
