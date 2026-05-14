@@ -8,13 +8,16 @@ def OneTimeValueGraphic(times,  # Моменты времени
                         values,  # Величины в моменты времени
                         graphicsName,  # Имя полотна
                         axeName,  # Имя оси
+                        lineColor,  # Цвет линии
+
                         needGrid=True  # Нужна ли сетка
                         ):  # Построение графика одной величины во времени
     # Строим полотно
     plt.figure()
 
     # Строим график
-    plt.plot(times, values)
+    plt.plot(times, values,
+             color=lineColor)
 
     # Добавляем надписи
     plt.title(graphicsName)  # Имя полотна
@@ -30,6 +33,8 @@ def TimesValuesGraphics(times,  # Моменты времени
                         listValuesNames,  # Список имен величин
                         graphicsName,  # Имя полотна
                         axeName,  # Имя оси
+                        linesColors,  # Цвет линии
+
                         needGrid=True  # Нужна ли сетка
                         ):  # Построение графиков нескольких величин во времени
     # Строим полотно
@@ -39,7 +44,9 @@ def TimesValuesGraphics(times,  # Моменты времени
     nValues = len(listValuesNames)  # Число величин
     inds = range(nValues)
     for ind in inds:
-        plt.plot(times, listValues[ind], label=listValuesNames[ind])
+        plt.plot(times, listValues[ind],
+                 label=listValuesNames[ind],
+                 color=linesColors[ind])
 
     # Добавляем надписи
     plt.title(graphicsName)  # Имя полотна
@@ -75,7 +82,8 @@ def PlotGraphics(t,  # Моменты времени
         OneTimeValueGraphic(t,  # Моменты времени
                             oneTimeValueGraphic["values"],  # Величины в моменты времени
                             oneTimeValueGraphic["graphName"],  # Имя полотна
-                            oneTimeValueGraphic["yAxesName"]  # Имя оси
+                            oneTimeValueGraphic["yAxesName"],  # Имя оси
+                            oneTimeValueGraphic["color"]  # Цвет линии
                             )
 
     # Отображаем несколько графиков на полотнах
@@ -84,7 +92,8 @@ def PlotGraphics(t,  # Моменты времени
                             timesValuesGraphic["listValues"],  # Список величин в моменты времени
                             timesValuesGraphic["listValuesNames"],  # Список имен величин
                             timesValuesGraphic["graphName"],  # Имя полотна
-                            timesValuesGraphic["yAxesName"]  # Имя оси
+                            timesValuesGraphic["yAxesName"],  # Имя оси
+                            timesValuesGraphic["color"]  # Цвет линии
                             )
 
     # отображаем полотна
@@ -106,7 +115,8 @@ def SaveGraphics(t,  # Моменты времени
         OneTimeValueGraphic(t,  # Моменты времени
                             oneTimeValueGraphic["values"],  # Величины в моменты времени
                             oneTimeValueGraphic["graphName"],  # Имя полотна
-                            oneTimeValueGraphic["yAxesName"]  # Имя оси
+                            oneTimeValueGraphic["yAxesName"],  # Имя оси
+                            oneTimeValueGraphic["color"]  # Цвет линии
                             )
         SaveGraphicsImage(dynDirName,  # Директория изображения
                           oneTimeValueGraphic["graphFileBaseName"],  # Имя файла графика
@@ -119,7 +129,8 @@ def SaveGraphics(t,  # Моменты времени
                             timesValuesGraphic["listValues"],  # Список величин в моменты времени
                             timesValuesGraphic["listValuesNames"],  # Список имен величин
                             timesValuesGraphic["graphName"],  # Имя полотна
-                            timesValuesGraphic["yAxesName"]  # Имя оси
+                            timesValuesGraphic["yAxesName"],  # Имя оси
+                            timesValuesGraphic["color"]  # Цвет линии
                             )
         SaveGraphicsImage(dynDirName,  # Директория изображения
                           timesValuesGraphic["graphFileBaseName"],  # Имя файла графика
