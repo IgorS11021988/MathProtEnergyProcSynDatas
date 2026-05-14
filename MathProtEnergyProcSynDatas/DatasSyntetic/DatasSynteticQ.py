@@ -1,4 +1,4 @@
-from MathProtEnergyProcSynDatas.File import ParametersSave, ReadProjectFileForModeling
+from MathProtEnergyProcSynDatas.File import ReadProjectFileForModeling
 
 from MathProtEnergyProcSynDatas.SystemStructure import SystemStructureQ
 
@@ -7,7 +7,7 @@ from MathProtEnergyProc import CountDynamicsQ
 from .GetModelingParameters import GetModelingParameters
 from .Save import SavedFinction, GetDynamicToCSVFileName
 
-from pandas import DataFrame
+from pandas import DataFrame, concat
 
 
 # Моделирование динамик системы (термодинамический подход)
@@ -95,8 +95,9 @@ def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режим
                                            t_evals=ts)  # Индекс динамики начинается с единицы
 
     # Выводим результат
-    return (DataFrame({"dynamicIndex": indexes.reshape(-1,)}),
-            Pars)
+    return concat([Pars,
+                   DataFrame({"dynamicIndex": indexes.reshape(-1,)})],
+                  axis=1)
 
 
 # Моделирование динамик системы (термодинамический подход)
@@ -141,36 +142,33 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
                                                       sep,  # Разделитель csv
                                                       dec  # Десятичный разделитель
                                                       )
-    (dynamicIndex, Pars) = SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режима
-                                                       dynamicParameters,  # Начальное состояние
-                                                       attributes,  # Аттрибуты
-                                                       dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+    allPars = SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режима
+                                          dynamicParameters,  # Начальное состояние
+                                          attributes,  # Аттрибуты
+                                          dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
 
-                                                       # Аттрибуты интегрирования
-                                                       integDynamic,  # Интегратор динамики
-                                                       integrateAttributes,  # Прочие аттрибуты интегрирования
+                                          # Аттрибуты интегрирования
+                                          integDynamic,  # Интегратор динамики
+                                          integrateAttributes,  # Прочие аттрибуты интегрирования
 
-                                                       # Функция класса системы
-                                                       structureFunctionQ,  # Функция структуры системы
-                                                       constParametersFunctionQ,  # Функция постоянных параметров системы
-                                                       characteristicsFunction,  # Функция характеристик системы
-                                                       conditionsFunction,  # Функция условий протекания процессов
+                                          # Функция класса системы
+                                          structureFunctionQ,  # Функция структуры системы
+                                          constParametersFunctionQ,  # Функция постоянных параметров системы
+                                          characteristicsFunction,  # Функция характеристик системы
+                                          conditionsFunction,  # Функция условий протекания процессов
 
-                                                       # Функции обработки
-                                                       inputArrayCreateQ,  # Функция предобработки входных данных
-                                                       outputArrayCreate,  # Функция постобработки выходных данных
+                                          # Функции обработки
+                                          inputArrayCreateQ,  # Функция предобработки входных данных
+                                          outputArrayCreate,  # Функция постобработки выходных данных
 
-                                                       # Графики
-                                                       indexesGraphics,  # Индексы графиков
+                                          # Графики
+                                          indexesGraphics,  # Индексы графиков
 
-                                                       # Имя файла динамики
-                                                       getDynamicToCSVFileName  # Функтор сохранения динамики
-                                                       )
+                                          # Имя файла динамики
+                                          getDynamicToCSVFileName  # Функтор сохранения динамики
+                                          )
 
     # Сохраняем параметры
-    ParametersSave(dynamicIndex,  # Индексы динамик
-                   Pars,  # Параметры
-                   ParametersFileName,  # Имя файла параметров
-                   sep,  # CSV разделитель
-                   dec  # Десятичный разделитель
-                   )
+    allPars.to_csv(ParametersFileName,
+                   sep=sep, decimal=dec,
+                   index=False)

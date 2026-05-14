@@ -1,24 +1,9 @@
 import os
 
-from pandas import concat, DataFrame
+from pandas import DataFrame
 
 from MathProtEnergyProcSynDatas.Indicate import NoIndicate
 from MathProtEnergyProcSynDatas.ValuesGraphics import PlotGraphics, SaveGraphics
-
-
-# Функция сохранения параметров
-def ParametersSave(dynamicCharacteristics,  # Индексы динамик
-                   Pars,  # Параметры
-                   ParametersFileName,  # Имя файла параметров
-
-                   sep,  # CSV разделитель
-                   dec  # Десятичный разделитель
-                   ):  # Сохранение параметров в файл
-    # Конкатенуем характеристики динамик к параметрам динамик
-    allDynamicDatas = concat([Pars, dynamicCharacteristics], axis=1)  # Параметры для
-
-    # Сохраняем параметры в файл
-    allDynamicDatas.to_csv(ParametersFileName, sep=sep, decimal=dec, index=False)  # Сохраняем в csv файл
 
 
 # Функция сохранения данных в .csv файл

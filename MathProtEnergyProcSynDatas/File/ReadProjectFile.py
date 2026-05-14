@@ -1,18 +1,18 @@
 import numpy as np
 import pandas as pd
-import json as js
+
+from .ReadProjectFileBase import ReadProjectStructure, ReadModesAttributes, ReadAttributesBorders
 
 
 # Считывание файла проекта для моделирования
 def ReadProjectFileForModeling(ProjectFileName  # Имя файла проекта
                                ):
     # Открываем файл проекта
-    with open(ProjectFileName, 'r') as ProjFileName:
-        ProjectsAttributes = js.load(ProjFileName)
+    (ProjectsAttributes,
+     sep, dec) = ReadProjectStructure(ProjectFileName)
 
     # Имя файла
     ParametersFileName = ProjectsAttributes["ParametersFileName"]  # Файл csv параметров
-    ModeAttributesFileName = ProjectsAttributes["ModeAttributesFileName"]  # Файл csv аттрибутов режима
     DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния аккумулятора
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов аккумулятора
     IntegrateAttributesFileName = ProjectsAttributes["IntegrateAttributesFileName"]  # Файл csv аттрибутов интегрирования
@@ -20,12 +20,8 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
     DynamicFileName = ProjectsAttributes["DynamicFileName"]  # Файл csv динамики
     dynamicParametersNDyblicates = ProjectsAttributes["DynamicParametersNDyblicates"]  # Число дубликаций начального состояния аккумулятора на каждый режим работы
 
-    # Разделители csv
-    sep = ProjectsAttributes["sep"]  # Разделитель csv
-    dec = ProjectsAttributes["dec"]  # Десятичный разделитель
-
     # Считываем файл аттрибутов режима
-    modeAttributes = pd.read_csv(ModeAttributesFileName, sep=sep, decimal=dec)
+    modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
 
     # Считываем файл начального состояния аккумулятора
     dynamicParameters = pd.read_csv(DynamicParametersFileName, sep=sep, decimal=dec)
@@ -66,26 +62,21 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
 def ReadProjectFileForGenerateModelParameters(ProjectFileName  # Имя файла проекта
                                               ):
     # Открываем файл проекта
-    with open(ProjectFileName, 'r') as ProjFileName:
-        ProjectsAttributes = js.load(ProjFileName)
+    (ProjectsAttributes,
+     sep, dec) = ReadProjectStructure(ProjectFileName)
 
     # Исходные данные
-    ModeAttributesFileName = ProjectsAttributes["ModeAttributesFileName"]  # Файл csv аттрибутов тока
     DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов
     DynamicParametersBorderFileName = ProjectsAttributes["DynamicParametersBorderFileName"]  # Файл csv границ начального состояния
-    AttributesBorderFileName = ProjectsAttributes["AttributesBorderFileName"]  # Файл csv границ аттрибутов
     dynamicParametersNDyblicates = np.array(ProjectsAttributes["DynamicParametersNDyblicates"])  # Число состояний, определяющих конкретную динамику
-    attributesNPoints = ProjectsAttributes["AttributesNPoints"]  # Число точек аттрибутов
-    sep = ProjectsAttributes["sep"]  # Разделитель csv
-    dec = ProjectsAttributes["dec"]  # Десятичный разделитель
 
-    # Считываем файл аттрибутов тока
-    modeAttributes = pd.read_csv(ModeAttributesFileName, sep=sep, decimal=dec)
+    # Считываем файл аттрибутов
+    modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
 
     # Считываем файлы границ
     dynamicParametersBorder = pd.read_csv(DynamicParametersBorderFileName, sep=sep, decimal=dec)  # Границы начального состояния
-    attributesBorder = pd.read_csv(AttributesBorderFileName, sep=sep, decimal=dec)  # Границы аттрибутов
+    (attributesBorder, attributesNPoints) = ReadAttributesBorders(ProjectsAttributes, sep, dec)  # Границы аттрибутов
 
     # Получаем числа аттрибутов
     nModes = len(modeAttributes)  # Число режимов работы
@@ -109,23 +100,20 @@ def ReadProjectFileForGenerateModelParameters(ProjectFileName  # Имя файл
 def ReadProjectFileForGenerateDynamicParameters(ProjectFileName  # Имя файла проекта
                                                 ):
     # Открываем файл проекта
-    with open(ProjectFileName, 'r') as ProjFileName:
-        ProjectsAttributes = js.load(ProjFileName)
+    (ProjectsAttributes,
+     sep, dec) = ReadProjectStructure(ProjectFileName)
 
     # Исходные данные
-    ModeAttributesFileName = ProjectsAttributes["ModeAttributesFileName"]  # Файл csv аттрибутов тока
     DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния
     DynamicParametersBorderFileName = ProjectsAttributes["DynamicParametersBorderFileName"]  # Файл csv границ начального состояния
     dynamicParametersNDyblicates = np.array(ProjectsAttributes["DynamicParametersNDyblicates"])  # Число точек начального состояния
     attributesNPoints = ProjectsAttributes["AttributesNPoints"]  # Число точек аттрибутов
-    sep = ProjectsAttributes["sep"]  # Разделитель csv
-    dec = ProjectsAttributes["dec"]  # Десятичный разделитель
-
-    # Считываем файл аттрибутов тока
-    modeAttributes = pd.read_csv(ModeAttributesFileName, sep=sep, decimal=dec)
 
     # Считываем файлы границ
     dynamicParametersBorder = pd.read_csv(DynamicParametersBorderFileName, sep=sep, decimal=dec)  # Границы начального состояния
+
+    # Считываем файл аттрибутов режима
+    modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
 
     # Получаем числа аттрибутов
     nModes = len(modeAttributes)  # Число режимов работы
@@ -147,23 +135,21 @@ def ReadProjectFileForGenerateDynamicParameters(ProjectFileName  # Имя фай
 def ReadProjectFileForGenerateAttributes(ProjectFileName  # Имя файла проекта
                                          ):
     # Открываем файл проекта
-    with open(ProjectFileName, 'r') as ProjFileName:
-        ProjectsAttributes = js.load(ProjFileName)
+    (ProjectsAttributes,
+     sep, dec) = ReadProjectStructure(ProjectFileName)
 
     # Исходные данные
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов
-    AttributesBorderFileName = ProjectsAttributes["AttributesBorderFileName"]  # Файл csv границ аттрибутов
-    attributesNPoints = ProjectsAttributes["AttributesNPoints"]  # Число точек аттрибутов
-    sep = ProjectsAttributes["sep"]  # Разделитель csv
-    dec = ProjectsAttributes["dec"]  # Десятичный разделитель
 
     # Считываем файлы границ
-    attributesBorder = pd.read_csv(AttributesBorderFileName, sep=sep, decimal=dec)  # Границы аттрибутов
+    (attributesBorder, attributesNPoints) = ReadAttributesBorders(ProjectsAttributes, sep, dec)  # Границы аттрибутов
 
     # Выводим результат
     return (attributesBorder,  # Границы аттрибутов
             attributesNPoints,  # Число точек аттрибутов
+
             AttributesFileName,  # Файл csv аттрибутов аккумулятора
+
             sep,  # Разделитель csv
             dec  # Десятичный разделитель
             )
@@ -173,20 +159,15 @@ def ReadProjectFileForGenerateAttributes(ProjectFileName  # Имя файла п
 def ReadProjectFileForSelectControlDynamics(ProjectFileName  # Имя файла проекта
                                             ):
     # Считываем файл проекта
-    with open(ProjectFileName, 'r') as ProjFileName:
-        ProjectsAttributes = js.load(ProjFileName)
+    (ProjectsAttributes,
+     sep, dec) = ReadProjectStructure(ProjectFileName)
 
     # Считываем имена файлов
     ParametersFileName = ProjectsAttributes["ParametersFileName"]  # Файл csv параметров
-    ModeAttributesFileName = ProjectsAttributes["ModeAttributesFileName"]  # Файл csv аттрибутов режима
     ControlDynamicsFileName = ProjectsAttributes["ControlDynamicsFileName"]  # Файл csv параметров с контролтными динамиками
 
-    # Разделители csv
-    sep = ProjectsAttributes["sep"]  # Разделитель csv
-    dec = ProjectsAttributes["dec"]  # Десятичный разделитель
-
     # Считываем файл аттрибутов режима
-    modeAttributes = pd.read_csv(ModeAttributesFileName, sep=sep, decimal=dec)
+    modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
 
     # Считываем файл параметров
     parameters = pd.read_csv(ParametersFileName, sep=sep, decimal=dec)
@@ -194,6 +175,7 @@ def ReadProjectFileForSelectControlDynamics(ProjectFileName  # Имя файла
     # Выводим результат
     return (modeAttributes,  # Аттрибуты режима
             parameters,  # Параметры
+
             sep,  # Разделитель csv
             dec,  # Десятичный разделитель
 
