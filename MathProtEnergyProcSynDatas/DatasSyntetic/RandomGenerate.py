@@ -1,8 +1,9 @@
 from MathProtEnergyProcSynDatas.File import ReadProjectFileForGenerateModelParameters
 from MathProtEnergyProcSynDatas.File import ReadProjectFileForGenerateAttributes
 from MathProtEnergyProcSynDatas.File import ReadProjectFileForGenerateDynamicParameters
-
 from MathProtEnergyProcSynDatas.DatasGenerate import GenerateRandomDatasInDiapasonsFrame
+
+from .GetModelingParameters import GetNDynamics
 
 import numpy as np
 
@@ -24,33 +25,70 @@ def RandomGenerateDynamicParametersFunction(dynamicParametersBorder,  # Гран
     return dynamicParameters
 
 
-# Генерация аттрибутов и начального состояния
-def RandomGenerateAttributesAndDynamicParameters(ProjectFileName  # Имя файла проекта
-                                                 ):
-    # Считываем файл проекта
-    (attributesBorder,  # Границы аттрибутов
-     attributesNPoints,  # Число точек аттрибутов
-     AttributesFileName,  # Файл csv аттрибутов аккумулятора
-     dynamicParametersBorder,  # Границы начального состояния
-     dynamicParametersNPoints,  # Число динамик
-     DynamicParametersFileName,  # Файл csv начального состояния аккумулятора
-     sep,  # Разделитель csv
-     dec  # Десятичный разделитель
-     ) = ReadProjectFileForGenerateModelParameters(ProjectFileName)
+def RandomGenerateDynamicParametersBase(attributesNPoints,  # Число точек аттрибутов
+                                        nModes,  # Число режимов работы
+                                        dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
 
+                                        dynamicParametersBorder  # Границы динамических параметров
+                                        ):
+    # Получаем число характеристик каждой динамики (число динамик)
+    dynamicParametersNPoints = GetNDynamics(attributesNPoints,  # Число точек аттрибутов
+                                            nModes,  # Число режимов работы
+                                            dynamicParametersNDyblicates  # Число состояний, определяющих конкретную динамику
+                                            )
+
+    # Генерируем и выводим значения параметров динамики
+    return RandomGenerateDynamicParametersFunction(dynamicParametersBorder,  # Границы динамических параметров
+                                                   dynamicParametersNPoints  # Числа динамических параметров в соответствующих границах
+                                                   )
+
+
+# Генерация аттрибутов и начального состояния
+def RandomGenerateAttributesAndDynamicParametersBase(attributesNPoints,  # Число точек аттрибутов
+                                                     nModes,  # Число режимов работы
+                                                     dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
+
+                                                     attributesBorder,  # Границы аттрибутов
+                                                     dynamicParametersBorder  # Границы динамических параметров
+                                                     ):
     # Генерируем значения аттрибутов аккумулятора
     attributes = GenerateRandomDatasInDiapasonsFrame(attributesBorder,
                                                      attributesNPoints)
 
     # Генерируем значения параметров динамики
-    dynamicParameters = RandomGenerateDynamicParametersFunction(dynamicParametersBorder,  # Границы динамических параметров
-                                                                dynamicParametersNPoints  # Числа динамических параметров в соответствующих границах
-                                                                )
+    dynamicParameters = RandomGenerateDynamicParametersBase(attributesNPoints,  # Число точек аттрибутов
+                                                            nModes,  # Число режимов работы
+                                                            dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
 
-    # Сохраняем значения аттрибутов аккумулятора в файл
-    attributes.to_csv(AttributesFileName,
-                      sep=sep, decimal=dec,
-                      index=False)
+                                                            dynamicParametersBorder  # Границы динамических параметров
+                                                            )
+
+    # Выводим результат
+    return (attributes, dynamicParameters)
+
+
+def RandomGenerateDynamicParameters(ProjectFileName  # Имя файла проекта
+                                    ):
+    # Считываем файл проекта
+    (dynamicParametersBorder,  # Границы начального состояния
+
+     attributesNPoints,  # Число точек аттрибутов
+     nModes,  # Число режимов работы
+     dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
+
+     DynamicParametersFileName,  # Файл csv начального состояния аккумулятора
+
+     sep,  # Разделитель csv
+     dec  # Десятичный разделитель
+     ) = ReadProjectFileForGenerateDynamicParameters(ProjectFileName)
+
+    # Генерируем значения параметров динамики
+    dynamicParameters = RandomGenerateDynamicParametersBase(attributesNPoints,  # Число точек аттрибутов
+                                                            nModes,  # Число режимов работы
+                                                            dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
+
+                                                            dynamicParametersBorder  # Границы динамических параметров
+                                                            )
 
     # Сохраняем значения начальных состояний аккумулятора в файл
     dynamicParameters.to_csv(DynamicParametersFileName,
@@ -78,20 +116,37 @@ def RandomGenerateAttributes(ProjectFileName  # Имя файла проекта
                       index=False)
 
 
-def RandomGenerateDynamicParameters(ProjectFileName  # Имя файла проекта
-                                    ):
+# Генерация аттрибутов и начального состояния
+def RandomGenerateAttributesAndDynamicParameters(ProjectFileName  # Имя файла проекта
+                                                 ):
     # Считываем файл проекта
-    (dynamicParametersBorder,  # Границы начального состояния
-     dynamicParametersNPoints,  # Число динамик
+    (attributesBorder,  # Границы аттрибутов
+     dynamicParametersBorder,  # Границы начального состояния
+
+     attributesNPoints,  # Число точек аттрибутов
+     nModes,  # Число режимов работы
+     dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
+
+     AttributesFileName,  # Файл csv аттрибутов аккумулятора
      DynamicParametersFileName,  # Файл csv начального состояния аккумулятора
+
      sep,  # Разделитель csv
      dec  # Десятичный разделитель
-     ) = ReadProjectFileForGenerateDynamicParameters(ProjectFileName)
+     ) = ReadProjectFileForGenerateModelParameters(ProjectFileName)
 
-    # Генерируем значения параметров динамики
-    dynamicParameters = RandomGenerateDynamicParametersFunction(dynamicParametersBorder,  # Границы динамических параметров
-                                                                dynamicParametersNPoints  # Числа динамических параметров в соответствующих границах
-                                                                )
+    # Генерируем значения аттрибутов и параметров аккумулятора
+    (attributes, dynamicParameters) = RandomGenerateAttributesAndDynamicParametersBase(attributesNPoints,  # Число точек аттрибутов
+                                                                                       nModes,  # Число режимов работы
+                                                                                       dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
+
+                                                                                       attributesBorder,  # Границы аттрибутов
+                                                                                       dynamicParametersBorder  # Границы динамических параметров
+                                                                                       )
+
+    # Сохраняем значения аттрибутов аккумулятора в файл
+    attributes.to_csv(AttributesFileName,
+                      sep=sep, decimal=dec,
+                      index=False)
 
     # Сохраняем значения начальных состояний аккумулятора в файл
     dynamicParameters.to_csv(DynamicParametersFileName,

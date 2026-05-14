@@ -2,35 +2,59 @@ from MathProtEnergyProcSynDatas.File import ParametersSave, ReadProjectFileForMo
 
 from MathProtEnergyProcSynDatas.SystemStructure import SystemStructure
 
-from .Save import SavedFinction
-
 from MathProtEnergyProc import CountDynamics
+
+from .GetModelingParameters import GetModelingParameters
+from .Save import SavedFinction, GetDynamicToCSVFileName
 
 from pandas import DataFrame
 
 
-# Функция расчета динамик (общеэнергетический подход)
-def SystemDynamicsFunction(Pars,  # Параметры
+# Моделирование динамик системы (термодинамический подход)
+def SystemDynamicsModelingBase(modeAttributes,  # Аттрибуты режима
+                               dynamicParameters,  # Начальное состояние
+                               attributes,  # Аттрибуты
+                               dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
 
-                           # Параметры интегрирования
-                           integrateAttributes,  # Аттрибуты интегрирования
+                               # Интегрирование
+                               integDynamic,  # Интегратор динамики
+                               integrateAttributes,  # Аттрибуты интегрирования
 
-                           # Класс системы
-                           sysDyn,  # Динамики системы
+                               # Функция класса системы
+                               structureFunction,  # Функция структуры системы
+                               constParametersFunction,  # Функция постоянных параметров системы
+                               characteristicsFunction,  # Функция характеристик системы
+                               conditionsFunction,  # Функция условий протекания процессов
 
-                           # Функции обработки
-                           inputArrayCreate,  # Функция предобработки входных данных
-                           outputArrayCreate,  # Функция постобработки выходных данных
+                               # Функции обработки
+                               inputArrayCreate,  # Функция предобработки входных данных
+                               outputArrayCreate,  # Функция постобработки выходных данных
 
-                           # Построение графиков
-                           indexesGraphics,  # Индексы графиков, которые нужно построить
-                           buildingGraphics,  # Необходимость построения графиков
+                               # Графики
+                               indexesGraphics,  # Индексы графиков
 
-                           # Имя файла
-                           DynamicFileNameBase,  # Базовое имя файла csv
-                           sep,  # Разделитель csv
-                           dec  # Десятичный разделитель
-                           ):
+                               # Имя функции сохранения динамики
+                               saveDynamicFun  # Функтор сохранения динамики
+                               ):
+    # Получаем параметры моделировния
+    (Pars,  # Параметры
+
+     # Параметры интегрирования
+     integrateAttributes,  # Аттрибуты интегрирования
+
+     # Построение графиков
+     indexesGraphics,  # Индексы графиков, которые нужно построить
+     buildingGraphics  # Необходимость построения графиков
+     ) = GetModelingParameters(modeAttributes,  # Аттрибуты режима
+                               dynamicParameters,  # Начальное состояние
+                               attributes,  # Аттрибуты
+                               dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+
+                               integrateAttributes,  # Прочие аттрибуты интегрирования
+
+                               indexesGraphics  # Индексы графиков
+                               )
+
     # Исходные данные моделирования системы
     (Tints,
      stateCoordinates0s,
@@ -44,17 +68,23 @@ def SystemDynamicsFunction(Pars,  # Параметры
     def savedFinction(dyn, index):
         # Сохраняем в файл и возвращаем индекс
         return SavedFinction(dyn, index,
-                             DynamicFileNameBase,  # основа имени файла динамики
+
+                             saveDynamicFun,  # Функтор сохранения динамики
                              buildingGraphics,  # Нужно ли строить график
                              indexesGraphics,  # Индексы графиков
 
-                             outputArrayCreate,  # Функция создания выходного массива
-
-                             sep, dec  # Разделители
+                             outputArrayCreate  # Функция создания выходного массива
                              )
 
-    # Задаем класс динамик системы
-    sysDyns = CountDynamics(sysDyn, savedFinction)
+    # Динамика системы
+    sysDyn = SystemStructure(structureFunction,  # Функция структуры системы
+                             constParametersFunction,  # Функция постоянных параметров системы
+                             characteristicsFunction,  # Функция характеристик системы
+                             conditionsFunction,  # Функция условий протекания процессов
+
+                             integDynamic  # Метод интегрирования динамики
+                             )
+    sysDyns = CountDynamics(sysDyn, savedFinction)  # Класс динамик системы
 
     # Моделируем динамики
     indexes = sysDyns.ComputingExperiment(Tints,
@@ -63,10 +93,11 @@ def SystemDynamicsFunction(Pars,  # Параметры
                                           t_evals=ts)  # Индекс динамики начинается с единицы
 
     # Выводим результат
-    return DataFrame({"dynamicIndex": indexes.reshape(-1,)})
+    return (DataFrame({"dynamicIndex": indexes.reshape(-1,)}),
+            Pars)
 
 
-# Моделирование динамик системы (общеэнергетический подход)
+# Моделирование динамик системы (термодинамический подход)
 def SystemDynamicsModeling(ProjectFileName,  # Имя файла проекта
 
                            # Функция класса системы
@@ -74,25 +105,26 @@ def SystemDynamicsModeling(ProjectFileName,  # Имя файла проекта
                            constParametersFunction,  # Функция постоянных параметров системы
                            characteristicsFunction,  # Функция характеристик системы
                            conditionsFunction,  # Функция условий протекания процессов
-                           integDynamicClass,  # Метод интегрирования динамики
+                           integDynamic,  # Интегратор динамики
 
                            # Функции обработки
                            inputArrayCreate,  # Функция предобработки входных данных
                            outputArrayCreate  # Функция постобработки выходных данных
                            ):
     # Считываем файл проекта
-    (Pars,  # Параметры
-
-     # Параметры интегрирования
-     integrateAttributes,  # Аттрибуты интегрирования
-     integrateMethod,  # Метод интегрирования дифференциальных уравнений
+    (integrateAttributes,  # Аттрибуты интегрирования
 
      # Построение графиков
      indexesGraphics,  # Индексы графиков, которые нужно построить
-     buildingGraphics,  # Необходимость построения графиков
+
+     # Моделирование системы
+     modeAttributes,  # Аттрибуты режима
+     dynamicParameters,  # Начальное состояние
+     attributes,  # Аттрибуты
+     dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
 
      # Имя файла динамики
-     DynamicFileName,  # Файл csv
+     DynamicFileNameBase,  # Файл csv
 
      # Имя файла параметров
      ParametersFileName,
@@ -101,38 +133,37 @@ def SystemDynamicsModeling(ProjectFileName,  # Имя файла проекта
      dec  # Десятичный разделитель
      ) = ReadProjectFileForModeling(ProjectFileName)
 
-    # Динамика системы
-    integDynamic = integDynamicClass(method=integrateMethod)  # Интегратор динамики
-    sysDyn = SystemStructure(structureFunction,  # Функция структуры системы
-                             constParametersFunction,  # Функция постоянных параметров системы
-                             characteristicsFunction,  # Функция характеристик системы
-                             conditionsFunction,  # Функция условий протекания процессов
+    # Получаем динамики системы
+    getDynamicToCSVFileName = GetDynamicToCSVFileName(DynamicFileNameBase,  # Файл csv
 
-                             integDynamic  # Метод интегрирования динамики
-                             )
+                                                      sep,  # Разделитель csv
+                                                      dec  # Десятичный разделитель
+                                                      )
+    (dynamicIndex, Pars) = SystemDynamicsModelingBase(modeAttributes,  # Аттрибуты режима
+                                                      dynamicParameters,  # Начальное состояние
+                                                      attributes,  # Аттрибуты
+                                                      dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
 
-    # Выполняем моделирование динамики системы
-    dynamicIndex = SystemDynamicsFunction(Pars,  # Параметры
+                                                      # Интегрирование
+                                                      integDynamic,  # Интегратор динамики
+                                                      integrateAttributes,  # Прочие аттрибуты интегрирования
 
-                                          # Параметры интегрирования
-                                          integrateAttributes,  # Аттрибуты интегрирования
+                                                      # Функция класса системы
+                                                      structureFunction,  # Функция структуры системы
+                                                      constParametersFunction,  # Функция постоянных параметров системы
+                                                      characteristicsFunction,  # Функция характеристик системы
+                                                      conditionsFunction,  # Функция условий протекания процессов
 
-                                          # Динамика системы
-                                          sysDyn,
+                                                      # Функции обработки
+                                                      inputArrayCreate,  # Функция предобработки входных данных
+                                                      outputArrayCreate,  # Функция постобработки выходных данных
 
-                                          # Функции обработки
-                                          inputArrayCreate,  # Функция предобработки входных данных
-                                          outputArrayCreate,  # Функция постобработки выходных данных
+                                                      # Графики
+                                                      indexesGraphics,  # Индексы графиков
 
-                                          # Построение графиков
-                                          indexesGraphics,  # Индексы графиков, которые нужно построить
-                                          buildingGraphics,  # Необходимость построения графиков
-
-                                          # Имя файла динамики
-                                          DynamicFileName,  # Файл csv
-                                          sep,  # Разделитель csv
-                                          dec  # Десятичный разделитель
-                                          )
+                                                      # Имя файла динамики
+                                                      getDynamicToCSVFileName  # Функтор сохранения динамики
+                                                      )
 
     # Сохраняем параметры
     ParametersSave(dynamicIndex,  # Индексы динамик

@@ -16,6 +16,7 @@ MathProtEnergyProcSynDatas.egg-info/top_level.txt
 MathProtEnergyProcSynDatas/DatasSyntetic/ControlDynamics.py
 MathProtEnergyProcSynDatas/DatasSyntetic/DatasSyntetic.py
 MathProtEnergyProcSynDatas/DatasSyntetic/DatasSynteticQ.py
+MathProtEnergyProcSynDatas/DatasSyntetic/GetModelingParameters.py
 MathProtEnergyProcSynDatas/DatasSyntetic/RandomGenerate.py
 MathProtEnergyProcSynDatas/DatasSyntetic/Save.py
 MathProtEnergyProcSynDatas/DatasSyntetic/__init__.py

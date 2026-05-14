@@ -97,7 +97,9 @@ def SaveGraphics(t,  # Моменты времени
                  timesValuesGraphicsDict,  # Несколько графиков на одном полотне
 
                  dynDirName,  # Имя директории динамики
-                 dynName  # Имя динамики
+                 dynName,  # Имя динамики
+
+                 showGraphics=False  # Необходимость отображения графиков
                  ):
     # Отображаем графики на одном полотне
     for oneTimeValueGraphic in oneTimeValueGraphicsDict:
@@ -124,8 +126,9 @@ def SaveGraphics(t,  # Моменты времени
                           dynName  # Имя динамики
                           )  # Сохраняем в файл
 
-    # Отображаем полотна
-    plt.show()
+    # Отображаем при необходимости график
+    if showGraphics:
+        plt.show()
 
     # Закрываем полотна
     plt.close("all")

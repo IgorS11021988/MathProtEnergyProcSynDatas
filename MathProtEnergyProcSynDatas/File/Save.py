@@ -38,15 +38,13 @@ def DynamicSave(dynamicsHeaders,  # Словарь динамик с загол�
 
 # Функция сохранения данных в .csv файл и отображения графиков
 def DynamicSaveAndPlotGraphics(dynamicsHeaders,  # Словарь динамик с заголовками
-                               dynamicsFileName,  # Имя файла динамик
+                               saveDynamicFun,  # Функция сохранения динамик
 
                                t,  # Моменты времени
                                oneTimeValueGraphicsDict,  # Один график на одном полотне
                                timesValuesGraphicsDict,  # Несколько графиков на одном полотне
 
                                plotGraphics,  # Необходимость построения графиков
-
-                               sep, dec,   # Разделители (csv и десятичный соответственно)
 
                                saveDynamicIndicator=NoIndicate,  # Индикатор сохранения динамики
                                plotGraphicIndicator=NoIndicate,  # Индикатор отображения графиков
@@ -55,12 +53,8 @@ def DynamicSaveAndPlotGraphics(dynamicsHeaders,  # Словарь динамик
     # Выводим сообщение о сохранении динамики в файл
     saveDynamicIndicator(index)
 
-    # Сохраняем динамику в .csv файл
-    DynamicSave(dynamicsHeaders,  # Словарь динамик с заголовками
-                dynamicsFileName,  # Имя файла динамик
-
-                sep, dec  # Разделители (csv и десятичный соответственно)
-                )
+    # Сохраняем динамику
+    saveDynamicFun(dynamicsHeaders, index)
 
     # Рисуем при необходимости график
     if plotGraphics:
@@ -76,15 +70,14 @@ def DynamicSaveAndPlotGraphics(dynamicsHeaders,  # Словарь динамик
 
 # Функция сохранения данных в .csv файл и отображения графиков
 def DynamicSaveAndSaveGraphics(dynamicsHeaders,  # Словарь динамик с заголовками
-                               dynamicsFileName,  # Имя файла динамик
+                               saveDynamicFun,  # Функция сохранения динамик
 
                                t,  # Моменты времени
                                oneTimeValueGraphicsDict,  # Один график на одном полотне
                                timesValuesGraphicsDict,  # Несколько графиков на одном полотне
 
                                plotGraphics,  # Необходимость построения графиков
-
-                               sep, dec,   # Разделители (csv и десятичный соответственно)
+                               showGraphics=False,  # Необходимость отображения графиков
 
                                saveDynamicIndicator=NoIndicate,  # Индикатор сохранения динамики
                                saveGraphicIndicator=NoIndicate,  # Индикатор отображения графиков
@@ -93,12 +86,8 @@ def DynamicSaveAndSaveGraphics(dynamicsHeaders,  # Словарь динамик
     # Выводим сообщение о сохранении динамики в файл
     saveDynamicIndicator(index)
 
-    # Сохраняем динамику в .csv файл
-    DynamicSave(dynamicsHeaders,  # Словарь динамик с заголовками
-                dynamicsFileName,  # Имя файла динамик
-
-                sep, dec  # Разделители (csv и десятичный соответственно)
-                )
+    # Сохраняем динамику
+    dynamicsFileName = saveDynamicFun(dynamicsHeaders, index)
 
     # Рисуем при необходимости график
     if plotGraphics:
@@ -110,11 +99,13 @@ def DynamicSaveAndSaveGraphics(dynamicsHeaders,  # Словарь динамик
         # Выводим сообщение о сохранении графика
         saveGraphicIndicator(index)
 
-        # Отображаем графики
+        # Сохраняем графики
         SaveGraphics(t,  # Моменты времени
                      oneTimeValueGraphicsDict,  # Один график на одном полотне
                      timesValuesGraphicsDict,  # Несколько графиков на одном полотне
 
                      dynDirName,  # Имя директории динамики
-                     dynName  # Имя динамики
+                     dynName,  # Имя динамики
+
+                     showGraphics=showGraphics  # Необходимость отображения графиков
                      )

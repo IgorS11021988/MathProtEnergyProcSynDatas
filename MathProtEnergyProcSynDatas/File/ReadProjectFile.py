@@ -2,9 +2,6 @@ import numpy as np
 import pandas as pd
 import json as js
 
-from MathProtEnergyProcSynDatas.DatasIndexes import IndexesGraphics
-from MathProtEnergyProcSynDatas.DatasIntegrate import ConcatModelingParameters, IntegrateAttributes
-
 
 # Считывание файла проекта для моделирования
 def ReadProjectFileForModeling(ProjectFileName  # Имя файла проекта
@@ -12,9 +9,6 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
     # Открываем файл проекта
     with open(ProjectFileName, 'r') as ProjFileName:
         ProjectsAttributes = js.load(ProjFileName)
-
-    # Метод интегрирования дифференциальных уравнений
-    integrateMethod = ProjectsAttributes["integrateMethod"]
 
     # Имя файла
     ParametersFileName = ProjectsAttributes["ParametersFileName"]  # Файл csv параметров
@@ -39,51 +33,23 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
     # Считываем файл аттрибутов аккумулятора
     attributes = pd.read_csv(AttributesFileName, sep=sep, decimal=dec)
 
-    # Размножаем параметры
-    Pars = ConcatModelingParameters(modeAttributes,  # Аттрибуты режима
-                                    dynamicParameters,  # Начальное состояние
-                                    attributes,  # Аттрибуты
-                                    dynamicParametersNDyblicates  # Число дубликаций динамик с разными параметрами
-                                    )
-
     # Считываем файл аттрибутов интегрирования
     integrateAttributes = pd.read_csv(IntegrateAttributesFileName, sep=sep, decimal=dec)
-
-    # Получаем числа аттрибутов
-    nDyns = len(Pars)  # Число динамик
-    nAttrs = len(attributes)  # Число аттрибутов аккумулятора
-    nMode = len(modeAttributes)  # Число аттрибутов режима
-
-    # Массив заголовков индексов аттрибутов
-    arrNamesAllAttrsIndexes = ["indexMode", "indexDynamicParameters", "indexParameters"]
-
-    # Массив чисел аттрибутов
-    arrNAllAttrs = [nMode, dynamicParametersNDyblicates, nAttrs]
-
-    # Вычисляем аттрибуты интегрирования
-    integrateAttributes = IntegrateAttributes(integrateAttributes,
-                                              arrNamesAllAttrsIndexes,
-                                              arrNAllAttrs,
-                                              nDyns)  # Приравниваем базовые аттрибуты интегрирования
 
     # Считываем файл индексов графиков
     indexesGraphics = pd.read_csv(IndexesGraphicsFileName, sep=sep, decimal=dec)
 
-    # Формируем индексы динамик, графики которых мы будем строить
-    (indexesGraphics, buildingGraphics) = IndexesGraphics(indexesGraphics,
-                                                          arrNamesAllAttrsIndexes,
-                                                          arrNAllAttrs)
-
     # Вцыводим результат
-    return (Pars,  # Параметры
-
-            # Параметры интегрирования
-            integrateAttributes,  # Аттрибуты интегрирования
-            integrateMethod,  # Метод интегрирования дифференциальных уравнений
+    return (integrateAttributes,  # Аттрибуты интегрирования
 
             # Построение графиков
             indexesGraphics,  # Индексы графиков, которые нужно построить
-            buildingGraphics,  # Необходимость построения графиков
+
+            # Моделирование системы
+            modeAttributes,  # Аттрибуты режима
+            dynamicParameters,  # Начальное состояние
+            attributes,  # Аттрибуты
+            dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
 
             # Имя файла динамики
             DynamicFileName,  # Файл csv
@@ -109,7 +75,7 @@ def ReadProjectFileForGenerateModelParameters(ProjectFileName  # Имя файл
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов
     DynamicParametersBorderFileName = ProjectsAttributes["DynamicParametersBorderFileName"]  # Файл csv границ начального состояния
     AttributesBorderFileName = ProjectsAttributes["AttributesBorderFileName"]  # Файл csv границ аттрибутов
-    dynamicParametersNDyblicates = np.array(ProjectsAttributes["DynamicParametersNDyblicates"])  # Число точек начального состояния
+    dynamicParametersNDyblicates = np.array(ProjectsAttributes["DynamicParametersNDyblicates"])  # Число состояний, определяющих конкретную динамику
     attributesNPoints = ProjectsAttributes["AttributesNPoints"]  # Число точек аттрибутов
     sep = ProjectsAttributes["sep"]  # Разделитель csv
     dec = ProjectsAttributes["dec"]  # Десятичный разделитель
@@ -124,16 +90,17 @@ def ReadProjectFileForGenerateModelParameters(ProjectFileName  # Имя файл
     # Получаем числа аттрибутов
     nModes = len(modeAttributes)  # Число режимов работы
 
-    # Получаем число характеристик каждой динамики (число динамик)
-    dynamicParametersNPoints = nModes * dynamicParametersNDyblicates * attributesNPoints
-
     # Выводим результат
     return (attributesBorder,  # Границы аттрибутов
-            attributesNPoints,  # Число точек аттрибутов
-            AttributesFileName,  # Файл csv аттрибутов аккумулятора
             dynamicParametersBorder,  # Границы начального состояния
-            dynamicParametersNPoints,  # Число характеристик каждой динамики (число динамик)
+
+            attributesNPoints,  # Число точек аттрибутов
+            nModes,  # Число режимов работы
+            dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
+
+            AttributesFileName,  # Файл csv аттрибутов аккумулятора
             DynamicParametersFileName,  # Файл csv начального состояния аккумулятора
+
             sep,  # Разделитель csv
             dec  # Десятичный разделитель
             )
@@ -163,13 +130,15 @@ def ReadProjectFileForGenerateDynamicParameters(ProjectFileName  # Имя фай
     # Получаем числа аттрибутов
     nModes = len(modeAttributes)  # Число режимов работы
 
-    # Получаем число характеристик каждой динамики (число динамик)
-    dynamicParametersNPoints = nModes * dynamicParametersNDyblicates * attributesNPoints
-
     # Выводим результат
     return (dynamicParametersBorder,  # Границы начального состояния
-            dynamicParametersNPoints,  # Число характеристик каждой динамики (число динамик)
+
+            attributesNPoints,  # Число точек аттрибутов
+            nModes,  # Число режимов работы
+            dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
+
             DynamicParametersFileName,  # Файл csv начального состояния аккумулятора
+
             sep,  # Разделитель csv
             dec  # Десятичный разделитель
             )
