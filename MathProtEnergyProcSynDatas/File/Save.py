@@ -1,24 +1,7 @@
 import os
 
-from pandas import DataFrame
-
 from MathProtEnergyProcSynDatas.Indicate import NoIndicate
 from MathProtEnergyProcSynDatas.ValuesGraphics import PlotGraphics, SaveGraphics
-
-
-# Функция сохранения данных в .csv файл
-def DynamicSave(dynamicsHeaders,  # Словарь динамик с заголовками
-                dynamicsFileName,  # Имя файла динамик
-
-                sep, dec  # Разделители (csv и десятичный соответственно)
-                ):
-    # Формируем фрейм данных
-    DynamicDatas = DataFrame(dynamicsHeaders)
-
-    # Сохраняем в csv файл
-    DynamicDatas.to_csv(dynamicsFileName,
-                        sep=sep, decimal=dec,
-                        index=False)
 
 
 # Функция сохранения данных в .csv файл и отображения графиков

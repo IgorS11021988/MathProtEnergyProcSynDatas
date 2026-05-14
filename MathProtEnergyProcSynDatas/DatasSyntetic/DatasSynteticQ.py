@@ -5,7 +5,7 @@ from MathProtEnergyProcSynDatas.SystemStructure import SystemStructureQ
 from MathProtEnergyProc import CountDynamicsQ
 
 from .GetModelingParameters import GetModelingParameters
-from .Save import SavedFinction, GetDynamicToCSVFileName
+from .Save import SavedFinction, DynamicToCSV
 
 from pandas import DataFrame, concat
 
@@ -137,11 +137,11 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
      ) = ReadProjectFileForModeling(ProjectFileName)
 
     # Получаем динамики системы
-    getDynamicToCSVFileName = GetDynamicToCSVFileName(DynamicFileNameBase,  # Файл csv
+    dynamicToCSV = DynamicToCSV(DynamicFileNameBase,  # Файл csv
 
-                                                      sep,  # Разделитель csv
-                                                      dec  # Десятичный разделитель
-                                                      )
+                                sep,  # Разделитель csv
+                                dec  # Десятичный разделитель
+                                )
     allPars = SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режима
                                           dynamicParameters,  # Начальное состояние
                                           attributes,  # Аттрибуты
@@ -165,10 +165,13 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
                                           indexesGraphics,  # Индексы графиков
 
                                           # Имя файла динамики
-                                          getDynamicToCSVFileName  # Функтор сохранения динамики
+                                          dynamicToCSV  # Функтор сохранения динамики
                                           )
 
     # Сохраняем параметры
     allPars.to_csv(ParametersFileName,
                    sep=sep, decimal=dec,
                    index=False)
+
+    # Возвращаем полученные динамики и параметры
+    return (allPars, dynamicToCSV)

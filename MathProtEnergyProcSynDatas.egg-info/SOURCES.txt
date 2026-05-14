@@ -21,6 +21,7 @@ MathProtEnergyProcSynDatas/DatasSyntetic/RandomGenerate.py
 MathProtEnergyProcSynDatas/DatasSyntetic/Save.py
 MathProtEnergyProcSynDatas/DatasSyntetic/__init__.py
 MathProtEnergyProcSynDatas/File/ReadProjectFile.py
+MathProtEnergyProcSynDatas/File/ReadProjectFileBase.py
 MathProtEnergyProcSynDatas/File/Save.py
 MathProtEnergyProcSynDatas/File/__init__.py
 MathProtEnergyProcSynDatas/tests/TestGenerateRandomDatasInDiapasons.py

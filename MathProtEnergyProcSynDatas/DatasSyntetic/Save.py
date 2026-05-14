@@ -1,12 +1,11 @@
 import numpy as np
+import pandas as pd
 
 from MathProtEnergyProc.IndexedNames import IndexedNamesFromIndexes
 
-from MathProtEnergyProcSynDatas.File.Save import DynamicSave
-
 
 # Функцтор сохранения динамики в .csv
-class GetDynamicToCSVFileName(object):
+class DynamicToCSV(object):
     # Инициализация класса
     def __init__(self,
 
@@ -27,6 +26,31 @@ class GetDynamicToCSVFileName(object):
     def GetDec(self):  # Десятичный разделитель
         return self.__dec
 
+    # Получение имени файла динамики по индексу
+    def GetDynFileName(self,
+
+                       index  # Индекс сохраняемой динамики
+                       ):
+        # Формируем и выводим имя файла
+        return IndexedNamesFromIndexes([index],  # Индексы
+                                       self.__DynamicFileNameBase,  # Начало имени
+                                       endName=".csv",  # Конец имени
+                                       sepName="_"  # Разделитель имени
+                                       )[0]
+
+    # Получение динамики по индексу
+    def GetDynamic(self,
+
+                   index  # Индекс сохраняемой динамики
+                   ):
+        # Формируем имя файла
+        dynamicsFileName = self.GetDynFileName(index)
+
+        # Считываем и возвращаем динамику
+        return pd.read_csv(dynamicsFileName,
+                           sep=self.__sep,
+                           decimal=self.__dec)
+
     # Функция вызова
     def __call__(self,
 
@@ -34,19 +58,16 @@ class GetDynamicToCSVFileName(object):
                  index  # Индекс сохраняемой динамики
                  ):
         # Формируем имя файла
-        dynamicsFileName = IndexedNamesFromIndexes([index],  # Индексы
-                                                   self.__DynamicFileNameBase,  # Начало имени
-                                                   endName=".csv",  # Конец имени
-                                                   sepName="_"  # Разделитель имени
-                                                   )[0]
+        dynamicsFileName = self.GetDynFileName(index)
 
-        # Сохраняем динамику в файл
-        DynamicSave(dyn,  # Словарь динамик с заголовками
-                    dynamicsFileName,  # Имя файла динамик
+        # Формируем фрейм данных
+        DynamicDatas = pd.DataFrame(dyn)
 
-                    self.__sep,    # Разделитель .csv
-                    self.__dec  # Десятичный разделитель
-                    )
+        # Сохраняем в csv файл
+        DynamicDatas.to_csv(dynamicsFileName,
+                            sep=self.__sep,
+                            decimal=self.__dec,
+                            index=False)
 
         # Выводим имя файла динамики
         return dynamicsFileName
