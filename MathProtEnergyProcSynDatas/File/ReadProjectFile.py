@@ -1,7 +1,6 @@
-import numpy as np
 import pandas as pd
 
-from .ReadProjectFileBase import ReadProjectStructure, ReadModesAttributes, ReadAttributesBorders
+from .ReadProjectFileBase import ReadProjectStructure, ReadModesAttributes, ReadAttributesBorders, ReadDynamicParametersBorder, ReadModelingDynamicAttributes
 
 
 # Считывание файла проекта для моделирования
@@ -15,8 +14,6 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
     ParametersFileName = ProjectsAttributes["ParametersFileName"]  # Файл csv параметров
     DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния аккумулятора
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов аккумулятора
-    IntegrateAttributesFileName = ProjectsAttributes["IntegrateAttributesFileName"]  # Файл csv аттрибутов интегрирования
-    IndexesGraphicsFileName = ProjectsAttributes["IndexesGraphicsFileName"]  # Файл csv индексов графиков, которые нужно построить
     DynamicFileName = ProjectsAttributes["DynamicFileName"]  # Файл csv динамики
     dynamicParametersNDyblicates = ProjectsAttributes["DynamicParametersNDyblicates"]  # Число дубликаций начального состояния аккумулятора на каждый режим работы
 
@@ -29,11 +26,9 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
     # Считываем файл аттрибутов аккумулятора
     attributes = pd.read_csv(AttributesFileName, sep=sep, decimal=dec)
 
-    # Считываем файл аттрибутов интегрирования
-    integrateAttributes = pd.read_csv(IntegrateAttributesFileName, sep=sep, decimal=dec)
-
-    # Считываем файл индексов графиков
-    indexesGraphics = pd.read_csv(IndexesGraphicsFileName, sep=sep, decimal=dec)
+    # Считываем файл аттрибутов моделирования динамики
+    (integrateAttributes,
+     indexesGraphics) = ReadModelingDynamicAttributes(ProjectsAttributes, sep, dec)
 
     # Вцыводим результат
     return (integrateAttributes,  # Аттрибуты интегрирования
@@ -65,18 +60,18 @@ def ReadProjectFileForGenerateModelParameters(ProjectFileName  # Имя файл
     (ProjectsAttributes,
      sep, dec) = ReadProjectStructure(ProjectFileName)
 
-    # Исходные данные
-    DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния
-    AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов
-    DynamicParametersBorderFileName = ProjectsAttributes["DynamicParametersBorderFileName"]  # Файл csv границ начального состояния
-    dynamicParametersNDyblicates = np.array(ProjectsAttributes["DynamicParametersNDyblicates"])  # Число состояний, определяющих конкретную динамику
-
     # Считываем файл аттрибутов
     modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
 
     # Считываем файлы границ
-    dynamicParametersBorder = pd.read_csv(DynamicParametersBorderFileName, sep=sep, decimal=dec)  # Границы начального состояния
-    (attributesBorder, attributesNPoints) = ReadAttributesBorders(ProjectsAttributes, sep, dec)  # Границы аттрибутов
+    (dynamicParametersBorder,
+     dynamicParametersNDyblicates) = ReadDynamicParametersBorder(ProjectsAttributes, sep, dec)  # Границы начального состояния
+    (attributesBorder,
+     attributesNPoints) = ReadAttributesBorders(ProjectsAttributes, sep, dec)  # Границы аттрибутов
+
+    # Исходные данные
+    DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния
+    AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов
 
     # Получаем числа аттрибутов
     nModes = len(modeAttributes)  # Число режимов работы
@@ -103,17 +98,16 @@ def ReadProjectFileForGenerateDynamicParameters(ProjectFileName  # Имя фай
     (ProjectsAttributes,
      sep, dec) = ReadProjectStructure(ProjectFileName)
 
-    # Исходные данные
-    DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния
-    DynamicParametersBorderFileName = ProjectsAttributes["DynamicParametersBorderFileName"]  # Файл csv границ начального состояния
-    dynamicParametersNDyblicates = np.array(ProjectsAttributes["DynamicParametersNDyblicates"])  # Число точек начального состояния
-    attributesNPoints = ProjectsAttributes["AttributesNPoints"]  # Число точек аттрибутов
-
     # Считываем файлы границ
-    dynamicParametersBorder = pd.read_csv(DynamicParametersBorderFileName, sep=sep, decimal=dec)  # Границы начального состояния
+    (dynamicParametersBorder,
+     dynamicParametersNDyblicates) = ReadDynamicParametersBorder(ProjectsAttributes, sep, dec)  # Границы начального состояния
 
     # Считываем файл аттрибутов режима
     modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
+
+    # Исходные данные
+    DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния
+    attributesNPoints = ProjectsAttributes["AttributesNPoints"]  # Число точек аттрибутов
 
     # Получаем числа аттрибутов
     nModes = len(modeAttributes)  # Число режимов работы

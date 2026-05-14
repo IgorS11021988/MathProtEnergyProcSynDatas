@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import json as js
 
@@ -41,7 +42,7 @@ def ReadAttributesBorders(ProjectsAttributes,  # Аттрибуты проект
                           ):
     # Получаем аттрбуты
     AttributesBorderFileName = ProjectsAttributes["AttributesBorderFileName"]  # Файл csv границ аттрибутов
-    attributesNPoints = ProjectsAttributes["AttributesNPoints"]  # Число точек аттрибутов
+    attributesNPoints = np.array(ProjectsAttributes["AttributesNPoints"], dtype=np.int_)  # Число точек аттрибутов
 
     # Считываем файлы границ
     attributesBorder = pd.read_csv(AttributesBorderFileName, sep=sep, decimal=dec)  # Границы аттрибутов
@@ -51,3 +52,44 @@ def ReadAttributesBorders(ProjectsAttributes,  # Аттрибуты проект
 
             attributesNPoints  # Число генерируемых точек аттрибутов
             )
+
+
+# Считываем файл границ параметров динамики
+def ReadDynamicParametersBorder(ProjectsAttributes,  # Аттрибуты проекта
+
+                                # Десятичные разделители
+                                sep,  # Разделитель csv
+                                dec  # Десятичный разделитель
+                                ):
+    # Получаем аттрбуты
+    DynamicParametersBorderFileName = ProjectsAttributes["DynamicParametersBorderFileName"]  # Файл csv границ начального состояния
+    dynamicParametersNDyblicates = np.array(ProjectsAttributes["DynamicParametersNDyblicates"], dtype=np.int_)  # Число состояний, определяющих конкретную динамику
+
+    # Считываем файлы границ
+    dynamicParametersBorder = pd.read_csv(DynamicParametersBorderFileName, sep=sep, decimal=dec)  # Границы начального состояния
+
+    # Выводим результат
+    return (dynamicParametersBorder,  # Границы аттрибутов
+
+            dynamicParametersNDyblicates  # Число генерируемых точек аттрибутов
+            )
+
+
+# Считываем аттрибуты интегрирования
+def ReadModelingDynamicAttributes(ProjectsAttributes,  # Аттрибуты проекта
+
+                                  # Десятичные разделители
+                                  sep,  # Разделитель csv
+                                  dec  # Десятичный разделитель
+                                  ):
+    # Получаем аттрбуты
+    IntegrateAttributesFileName = ProjectsAttributes["IntegrateAttributesFileName"]  # Файл csv аттрибутов интегрирования
+    IndexesGraphicsFileName = ProjectsAttributes["IndexesGraphicsFileName"]  # Файл csv индексов графиков, которые нужно построить
+
+    # Считываем файлы аттрибутов
+    integrateAttributes = pd.read_csv(IntegrateAttributesFileName, sep=sep, decimal=dec)  # Аттрибуты интегирования
+    indexesGraphics = pd.read_csv(IndexesGraphicsFileName, sep=sep, decimal=dec)  # Индексы графиков
+
+    # Вывыдим считанные аттрибуты
+    return (integrateAttributes,
+            indexesGraphics)
