@@ -5,7 +5,7 @@ from MathProtEnergyProcSynDatas.SystemStructure import SystemStructureQ
 from MathProtEnergyProc import CountDynamicsQ
 
 from .GetModelingParameters import GetModelingParameters
-from .Save import SavedFinction, DynamicToCSV
+from .Save import SavedFinction, DynamicToCSVAndPlot
 
 from pandas import DataFrame, concat
 
@@ -33,9 +33,6 @@ def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режим
                                 inputArrayCreateQ,  # Функция предобработки входных данных
                                 outputArrayCreate,  # Функция постобработки выходных данных
 
-                                # Графики
-                                indexesGraphics,  # Индексы графиков
-
                                 # Имя функции сохранения динамики
                                 saveDynamicFun  # Функтор сохранения динамики
                                 ):
@@ -43,11 +40,7 @@ def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режим
     (Pars,  # Параметры
 
      # Параметры интегрирования
-     integrateAttributes,  # Аттрибуты интегрирования
-
-     # Построение графиков
-     indexesGraphics,  # Индексы графиков, которые нужно построить
-     buildingGraphics  # Необходимость построения графиков
+     integrateAttributes  # Аттрибуты интегрирования
      ) = GetModelingParameters(modeAttributes,  # Аттрибуты режима
                                dynamicParameters,  # Начальное состояние
                                attributes,  # Аттрибуты
@@ -56,9 +49,7 @@ def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режим
                                dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
                                nAttrs,  # Число аттрибутов
 
-                               integrateAttributes,  # Аттрибуты интегрирования
-
-                               indexesGraphics  # Индексы графиков
+                               integrateAttributes  # Аттрибуты интегрирования
                                )
 
     # Исходные данные моделирования системы
@@ -77,8 +68,6 @@ def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режим
         return SavedFinction(dyn, index,
 
                              saveDynamicFun,  # Функтор сохранения динамики
-                             buildingGraphics,  # Нужно ли строить график
-                             indexesGraphics,  # Индексы графиков
 
                              outputArrayCreate  # Функция создания выходного массива
                              )
@@ -126,9 +115,6 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
      # Интегрирование
      integrateAttributes,  # Аттрибуты интегрирования
 
-     # Построение графиков
-     indexesGraphics,  # Индексы графиков, которые нужно построить
-
      # Моделирование системы
      modeAttributes,  # Аттрибуты режима
      dynamicParameters,  # Начальное состояние
@@ -146,11 +132,16 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
      ) = ReadProjectFileForModeling(ProjectFileName)
 
     # Получаем динамики системы
-    dynamicToCSV = DynamicToCSV(ProjectsAttributes,  # Аттрибуты проекта
+    dynamicToCSV = DynamicToCSVAndPlot(nMode,  # Число аттрибутов режима
+                                       dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                                       nAttrs,  # Число аттрибутов
 
-                                sep,  # Разделитель csv
-                                dec  # Десятичный разделитель
-                                )
+                                       ProjectsAttributes,  # Аттрибуты проекта
+
+                                       # Файл CSV
+                                       sep,  # Сепаратор CSV
+                                       dec  # Десятичный разделитель
+                                       )
     allPars = SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режима
                                           dynamicParameters,  # Начальное состояние
                                           attributes,  # Аттрибуты
@@ -172,9 +163,6 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
                                           # Функции обработки
                                           inputArrayCreateQ,  # Функция предобработки входных данных
                                           outputArrayCreate,  # Функция постобработки выходных данных
-
-                                          # Графики
-                                          indexesGraphics,  # Индексы графиков
 
                                           # Имя файла динамики
                                           dynamicToCSV  # Функтор сохранения динамики

@@ -3,7 +3,10 @@ import pandas as pd
 
 from MathProtEnergyProc.IndexedNames import IndexedNamesFromIndexes
 
-from MathProtEnergyProcSynDatas.File.ReadProjectFileBase import ReadDynamicFileName
+from MathProtEnergyProcSynDatas.File.ReadProjectFileBase import ReadDynamicFileName, ReadIndexesGraphics
+from MathProtEnergyProcSynDatas.DatasIndexes import IndexesGraphics
+
+from .GetModelingParameters import GetAttribuesIndexesNames
 
 
 # Функцтор сохранения динамики в .csv
@@ -81,6 +84,7 @@ class DynamicToCSV(DynamicToCSVBase):
     def __init__(self,
 
                  ProjectsAttributes,  # Аттрибуты проекта
+
                  sep,  # Сепаратор CSV
                  dec  # Десятичный разделитель
                  ):
@@ -95,12 +99,100 @@ class DynamicToCSV(DynamicToCSVBase):
                          )
 
 
+# Функцтор сохранения динамики в .csv (базовый функтор)
+class DynamicToCSVAndPlotBase(DynamicToCSVBase):
+    # Инициализация класса
+    def __init__(self,
+
+                 nMode,  # Число аттрибутов режима
+                 dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                 nAttrs,  # Число аттрибутов
+
+                 indexesGraphics,  # Индексы графиков
+
+                 # Файл CSV
+                 DynamicFileNameBase,  # Начало имени
+                 sep,  # Сепаратор CSV
+                 dec  # Десятичный разделитель
+                 ):
+        # Выполняем базовую инициализацию класса
+        super().__init__(DynamicFileNameBase, sep, dec)
+
+        # Получаем индексы графиков
+        self.SetIndexesGraphics(nMode,  # Число аттрибутов режима
+                                dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                                nAttrs,  # Число аттрибутов
+
+                                indexesGraphics  # Индексы графиков
+                                )
+
+    # Задание индексов графиков
+    def SetIndexesGraphics(self,
+
+                           nMode,  # Число аттрибутов режима
+                           dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                           nAttrs,  # Число аттрибутов
+
+                           indexesGraphics  # Индексы графиков
+                           ):
+        # Получаем информацию по индексам аттрибутов
+        (arrNamesAllAttrsIndexes,  # Массив заголовков индексов аттрибутов
+         arrNAllAttrs  # Массив чисел аттрибутов
+         ) = GetAttribuesIndexesNames(nMode,  # Число аттрибутов режима
+                                      dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                                      nAttrs  # Число аттрибутов
+                                      )
+
+        # Формируем индексы динамик, графики которых мы будем строить
+        (self.__indexesGraphics,
+         self.__buildingGraphics) = IndexesGraphics(indexesGraphics,
+                                                    arrNamesAllAttrsIndexes,
+                                                    arrNAllAttrs)
+
+    # Проверка возможности построения графиков
+    def IsAllowPlot(self, index):
+        return (self.__buildingGraphics and np.any(index == self.__indexesGraphics))
+
+
+# Функцтор сохранения динамики в .csv
+class DynamicToCSVAndPlot(DynamicToCSVAndPlotBase):
+    # Инициализация класса
+    def __init__(self,
+
+                 nMode,  # Число аттрибутов режима
+                 dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                 nAttrs,  # Число аттрибутов
+
+                 ProjectsAttributes,  # Аттрибуты проекта
+
+                 # Файл CSV
+                 sep,  # Сепаратор CSV
+                 dec  # Десятичный разделитель
+                 ):
+        # Получаем начало имени файла динамики
+        DynamicFileNameBase = ReadDynamicFileName(ProjectsAttributes)
+
+        # Получаем индексы графиков
+        indexesGraphics = ReadIndexesGraphics(ProjectsAttributes, sep, dec)
+
+        # Выполняем базовую инициализацию класса
+        super().__init__(nMode,  # Число аттрибутов режима
+                         dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                         nAttrs,  # Число аттрибутов
+
+                         indexesGraphics,  # Индексы графиков
+
+                         # Файл CSV
+                         DynamicFileNameBase,  # Начало имени
+                         sep,  # Сепаратор CSV
+                         dec  # Десятичный разделитель
+                         )
+
+
 # Функция сохранения в файл
 def SavedFinction(dyn, index,
 
                   saveDynamicFun,  # Функтор сохранения динамики
-                  buildingGraphics,  # Нужно ли строить график
-                  indexesGraphics,  # Индексы графиков
 
                   outputArrayCreate  # Функция создания выходного массива
                   ):
@@ -108,8 +200,7 @@ def SavedFinction(dyn, index,
     index += 1
 
     # Сохраняем данные в файл
-    BuildGraphic = (buildingGraphics and np.any(index == indexesGraphics))  # Необходимость построения графика
-    outputArrayCreate(dyn, index, saveDynamicFun, plotGraphics=BuildGraphic)
+    outputArrayCreate(dyn, index, saveDynamicFun)
 
     # Возвращаем индекс
     return index

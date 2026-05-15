@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .ReadProjectFileBase import ReadProjectStructure, ReadModesAttributes, ReadAttributesBorders, ReadDynamicParametersBorder, ReadIntegrateAttributes, ReadIndexesGraphics
+from .ReadProjectFileBase import ReadProjectStructure, ReadModesAttributes, ReadAttributesBorders, ReadDynamicParametersBorder, ReadIntegrateAttributes
 
 
 # Считывание файла проекта для моделирования
@@ -30,17 +30,11 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
     # Считываем файл аттрибутов интегрирования динамики
     integrateAttributes = ReadIntegrateAttributes(ProjectsAttributes, sep, dec)
 
-    # Считываем файл индексов графиков динамики
-    indexesGraphics = ReadIndexesGraphics(ProjectsAttributes, sep, dec)
-
     # Вцыводим результат
     return (ProjectsAttributes,
 
             # Интегрирование
             integrateAttributes,  # Аттрибуты интегрирования
-
-            # Построение графиков
-            indexesGraphics,  # Индексы графиков, которые нужно построить
 
             # Моделирование системы
             modeAttributes,  # Аттрибуты режима

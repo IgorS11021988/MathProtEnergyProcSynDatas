@@ -12,8 +12,6 @@ def DynamicSaveAndPlotGraphics(dynamicsHeaders,  # Словарь динамик
                                oneTimeValueGraphicsDict,  # Один график на одном полотне
                                timesValuesGraphicsDict,  # Несколько графиков на одном полотне
 
-                               plotGraphics,  # Необходимость построения графиков
-
                                saveDynamicIndicator=NoIndicate,  # Индикатор сохранения динамики
                                plotGraphicIndicator=NoIndicate,  # Индикатор отображения графиков
                                index=0  # Индекс динамики
@@ -25,7 +23,7 @@ def DynamicSaveAndPlotGraphics(dynamicsHeaders,  # Словарь динамик
     saveDynamicFun.SaveDynamic(dynamicsHeaders, index)
 
     # Рисуем при необходимости график
-    if plotGraphics:
+    if saveDynamicFun.IsAllowPlot(index):
         # Выводим сообщение о сохранении графика
         plotGraphicIndicator(index)
 
@@ -44,7 +42,6 @@ def DynamicSaveAndSaveGraphics(dynamicsHeaders,  # Словарь динамик
                                oneTimeValueGraphicsDict,  # Один график на одном полотне
                                timesValuesGraphicsDict,  # Несколько графиков на одном полотне
 
-                               plotGraphics,  # Необходимость построения графиков
                                showGraphics=False,  # Необходимость отображения графиков
 
                                saveDynamicIndicator=NoIndicate,  # Индикатор сохранения динамики
@@ -58,7 +55,7 @@ def DynamicSaveAndSaveGraphics(dynamicsHeaders,  # Словарь динамик
     dynamicsFileName = saveDynamicFun.SaveDynamic(dynamicsHeaders, index)
 
     # Рисуем при необходимости график
-    if plotGraphics:
+    if saveDynamicFun.IsAllowPlot(index):
         # Получаем имена директории и динамики
         dynDirName = os.path.dirname(dynamicsFileName)  # Имя директории
         dynName = os.path.basename(dynamicsFileName)  # Имя файла динамики с расширением

@@ -1,4 +1,3 @@
-from MathProtEnergyProcSynDatas.DatasIndexes import IndexesGraphics
 from MathProtEnergyProcSynDatas.DatasIntegrate import ConcatModelingParameters, IntegrateAttributes
 
 
@@ -37,9 +36,7 @@ def GetModelingParameters(modeAttributes,  # Аттрибуты режима
                           dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
                           nAttrs,  # Число аттрибутов
 
-                          integrateAttributes,  # Аттрибуты интегрирования
-
-                          indexesGraphics  # Индексы графиков
+                          integrateAttributes  # Аттрибуты интегрирования
                           ):
     # Размножаем параметры
     Pars = ConcatModelingParameters(modeAttributes,  # Аттрибуты режима
@@ -65,18 +62,9 @@ def GetModelingParameters(modeAttributes,  # Аттрибуты режима
                                               arrNAllAttrs,
                                               nDyns)  # Приравниваем базовые аттрибуты интегрирования
 
-    # Формируем индексы динамик, графики которых мы будем строить
-    (indexesGraphics, buildingGraphics) = IndexesGraphics(indexesGraphics,
-                                                          arrNamesAllAttrsIndexes,
-                                                          arrNAllAttrs)
-
     # Вцыводим результат
     return (Pars,  # Параметры
 
             # Параметры интегрирования
-            integrateAttributes,  # Аттрибуты интегрирования
-
-            # Построение графиков
-            indexesGraphics,  # Индексы графиков, которые нужно построить
-            buildingGraphics  # Необходимость построения графиков
+            integrateAttributes  # Аттрибуты интегрирования
             )
