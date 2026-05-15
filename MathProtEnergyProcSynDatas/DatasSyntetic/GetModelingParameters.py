@@ -11,11 +11,31 @@ def GetNDynamics(attributesNPoints,  # Число точек аттрибуто�
     return nModes * dynamicParametersNDyblicates * attributesNPoints
 
 
+# Функция индксов аттрибутов
+def GetAttribuesIndexesNames(nMode,  # Число аттрибутов режима
+                             dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                             nAttrs  # Число аттрибутов
+                             ):
+    # Массив заголовков индексов аттрибутов
+    arrNamesAllAttrsIndexes = ["indexMode", "indexDynamicParameters", "indexParameters"]
+
+    # Массив чисел аттрибутов
+    arrNAllAttrs = [nMode, dynamicParametersNDyblicates, nAttrs]
+
+    # Выводим массивы
+    return (arrNamesAllAttrsIndexes,  # Массив заголовков индексов аттрибутов
+            arrNAllAttrs  # Массив чисел аттрибутов
+            )
+
+
 # Считывание файла проекта для моделирования
 def GetModelingParameters(modeAttributes,  # Аттрибуты режима
                           dynamicParameters,  # Начальное состояние
                           attributes,  # Аттрибуты
+
+                          nMode,  # Число аттрибутов режима
                           dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                          nAttrs,  # Число аттрибутов
 
                           integrateAttributes,  # Аттрибуты интегрирования
 
@@ -30,14 +50,14 @@ def GetModelingParameters(modeAttributes,  # Аттрибуты режима
 
     # Получаем числа аттрибутов
     nDyns = len(Pars)  # Число динамик
-    nAttrs = len(attributes)  # Число аттрибутов аккумулятора
-    nMode = len(modeAttributes)  # Число аттрибутов режима
 
-    # Массив заголовков индексов аттрибутов
-    arrNamesAllAttrsIndexes = ["indexMode", "indexDynamicParameters", "indexParameters"]
-
-    # Массив чисел аттрибутов
-    arrNAllAttrs = [nMode, dynamicParametersNDyblicates, nAttrs]
+    # Получаем информацию по индексам аттрибутов
+    (arrNamesAllAttrsIndexes,  # Массив заголовков индексов аттрибутов
+     arrNAllAttrs  # Массив чисел аттрибутов
+     ) = GetAttribuesIndexesNames(nMode,  # Число аттрибутов режима
+                                  dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                                  nAttrs  # Число аттрибутов
+                                  )
 
     # Вычисляем аттрибуты интегрирования
     integrateAttributes = IntegrateAttributes(integrateAttributes,

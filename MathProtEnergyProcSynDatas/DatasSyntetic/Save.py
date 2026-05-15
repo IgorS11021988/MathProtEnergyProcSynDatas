@@ -3,9 +3,11 @@ import pandas as pd
 
 from MathProtEnergyProc.IndexedNames import IndexedNamesFromIndexes
 
+from MathProtEnergyProcSynDatas.File.ReadProjectFileBase import ReadDynamicFileName
+
 
 # Функцтор сохранения динамики в .csv
-class DynamicToCSV(object):
+class DynamicToCSVBase(object):
     # Инициализация класса
     def __init__(self,
 
@@ -52,11 +54,11 @@ class DynamicToCSV(object):
                            decimal=self.__dec)
 
     # Функция вызова
-    def __call__(self,
+    def SaveDynamic(self,
 
-                 dyn,  # Сохраняемая динамика
-                 index  # Индекс сохраняемой динамики
-                 ):
+                    dyn,  # Сохраняемая динамика
+                    index  # Индекс сохраняемой динамики
+                    ):
         # Формируем имя файла
         dynamicsFileName = self.GetDynFileName(index)
 
@@ -71,6 +73,26 @@ class DynamicToCSV(object):
 
         # Выводим имя файла динамики
         return dynamicsFileName
+
+
+# Функцтор сохранения динамики в .csv
+class DynamicToCSV(DynamicToCSVBase):
+    # Инициализация класса
+    def __init__(self,
+
+                 ProjectsAttributes,  # Аттрибуты проекта
+                 sep,  # Сепаратор CSV
+                 dec  # Десятичный разделитель
+                 ):
+        # Получаем начало имени файла динамики
+        DynamicFileNameBase = ReadDynamicFileName(ProjectsAttributes)
+
+        # Инициализируем базовый класс
+        super().__init__(DynamicFileNameBase,  # Начало имени
+
+                         sep,  # Сепаратор CSV
+                         dec  # Десятичный разделитель
+                         )
 
 
 # Функция сохранения в файл

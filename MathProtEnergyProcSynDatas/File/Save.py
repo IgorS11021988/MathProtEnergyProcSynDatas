@@ -22,7 +22,7 @@ def DynamicSaveAndPlotGraphics(dynamicsHeaders,  # Словарь динамик
     saveDynamicIndicator(index)
 
     # Сохраняем динамику
-    saveDynamicFun(dynamicsHeaders, index)
+    saveDynamicFun.SaveDynamic(dynamicsHeaders, index)
 
     # Рисуем при необходимости график
     if plotGraphics:
@@ -55,7 +55,7 @@ def DynamicSaveAndSaveGraphics(dynamicsHeaders,  # Словарь динамик
     saveDynamicIndicator(index)
 
     # Сохраняем динамику
-    dynamicsFileName = saveDynamicFun(dynamicsHeaders, index)
+    dynamicsFileName = saveDynamicFun.SaveDynamic(dynamicsHeaders, index)
 
     # Рисуем при необходимости график
     if plotGraphics:

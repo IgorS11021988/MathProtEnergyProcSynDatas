@@ -1,6 +1,6 @@
 import pandas as pd
 
-from .ReadProjectFileBase import ReadProjectStructure, ReadModesAttributes, ReadAttributesBorders, ReadDynamicParametersBorder, ReadModelingDynamicAttributes
+from .ReadProjectFileBase import ReadProjectStructure, ReadModesAttributes, ReadAttributesBorders, ReadDynamicParametersBorder, ReadIntegrateAttributes, ReadIndexesGraphics
 
 
 # Считывание файла проекта для моделирования
@@ -14,24 +14,30 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
     ParametersFileName = ProjectsAttributes["ParametersFileName"]  # Файл csv параметров
     DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния аккумулятора
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов аккумулятора
-    DynamicFileName = ProjectsAttributes["DynamicFileName"]  # Файл csv динамики
     dynamicParametersNDyblicates = ProjectsAttributes["DynamicParametersNDyblicates"]  # Число дубликаций начального состояния аккумулятора на каждый режим работы
 
     # Считываем файл аттрибутов режима
-    modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
+    (modeAttributes,
+     nModes) = ReadModesAttributes(ProjectsAttributes, sep, dec)
 
     # Считываем файл начального состояния аккумулятора
     dynamicParameters = pd.read_csv(DynamicParametersFileName, sep=sep, decimal=dec)
 
     # Считываем файл аттрибутов аккумулятора
     attributes = pd.read_csv(AttributesFileName, sep=sep, decimal=dec)
+    nAttrs = len(attributes)  # Число аттрибутов
 
-    # Считываем файл аттрибутов моделирования динамики
-    (integrateAttributes,
-     indexesGraphics) = ReadModelingDynamicAttributes(ProjectsAttributes, sep, dec)
+    # Считываем файл аттрибутов интегрирования динамики
+    integrateAttributes = ReadIntegrateAttributes(ProjectsAttributes, sep, dec)
+
+    # Считываем файл индексов графиков динамики
+    indexesGraphics = ReadIndexesGraphics(ProjectsAttributes, sep, dec)
 
     # Вцыводим результат
-    return (integrateAttributes,  # Аттрибуты интегрирования
+    return (ProjectsAttributes,
+
+            # Интегрирование
+            integrateAttributes,  # Аттрибуты интегрирования
 
             # Построение графиков
             indexesGraphics,  # Индексы графиков, которые нужно построить
@@ -40,10 +46,10 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
             modeAttributes,  # Аттрибуты режима
             dynamicParameters,  # Начальное состояние
             attributes,  # Аттрибуты
-            dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
 
-            # Имя файла динамики
-            DynamicFileName,  # Файл csv
+            nModes,  # Число аттрибутов режима
+            dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+            nAttrs,  # Число аттрибутов
 
             # Имя файла параметров
             ParametersFileName,
@@ -61,7 +67,7 @@ def ReadProjectFileForGenerateModelParameters(ProjectFileName  # Имя файл
      sep, dec) = ReadProjectStructure(ProjectFileName)
 
     # Считываем файл аттрибутов
-    modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
+    (_, nModes) = ReadModesAttributes(ProjectsAttributes, sep, dec)
 
     # Считываем файлы границ
     (dynamicParametersBorder,
@@ -72,9 +78,6 @@ def ReadProjectFileForGenerateModelParameters(ProjectFileName  # Имя файл
     # Исходные данные
     DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов
-
-    # Получаем числа аттрибутов
-    nModes = len(modeAttributes)  # Число режимов работы
 
     # Выводим результат
     return (attributesBorder,  # Границы аттрибутов
@@ -103,14 +106,11 @@ def ReadProjectFileForGenerateDynamicParameters(ProjectFileName  # Имя фай
      dynamicParametersNDyblicates) = ReadDynamicParametersBorder(ProjectsAttributes, sep, dec)  # Границы начального состояния
 
     # Считываем файл аттрибутов режима
-    modeAttributes = ReadModesAttributes(ProjectsAttributes, sep, dec)
+    (_, nModes) = ReadModesAttributes(ProjectsAttributes, sep, dec)
 
     # Исходные данные
     DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния
     attributesNPoints = ProjectsAttributes["AttributesNPoints"]  # Число точек аттрибутов
-
-    # Получаем числа аттрибутов
-    nModes = len(modeAttributes)  # Число режимов работы
 
     # Выводим результат
     return (dynamicParametersBorder,  # Границы начального состояния
@@ -136,7 +136,8 @@ def ReadProjectFileForGenerateAttributes(ProjectFileName  # Имя файла п
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов
 
     # Считываем файлы границ
-    (attributesBorder, attributesNPoints) = ReadAttributesBorders(ProjectsAttributes, sep, dec)  # Границы аттрибутов
+    (attributesBorder,
+     attributesNPoints) = ReadAttributesBorders(ProjectsAttributes, sep, dec)  # Границы аттрибутов
 
     # Выводим результат
     return (attributesBorder,  # Границы аттрибутов

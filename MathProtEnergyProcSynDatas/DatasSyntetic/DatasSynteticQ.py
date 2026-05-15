@@ -14,7 +14,10 @@ from pandas import DataFrame, concat
 def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режима
                                 dynamicParameters,  # Начальное состояние
                                 attributes,  # Аттрибуты
+
+                                nMode,  # Число аттрибутов режима
                                 dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                                nAttrs,  # Число аттрибутов
 
                                 # Интегрирование
                                 integDynamic,  # Интегратор динамики
@@ -48,9 +51,12 @@ def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режим
      ) = GetModelingParameters(modeAttributes,  # Аттрибуты режима
                                dynamicParameters,  # Начальное состояние
                                attributes,  # Аттрибуты
-                               dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
 
-                               integrateAttributes,  # Прочие аттрибуты интегрирования
+                               nMode,  # Число аттрибутов режима
+                               dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                               nAttrs,  # Число аттрибутов
+
+                               integrateAttributes,  # Аттрибуты интегрирования
 
                                indexesGraphics  # Индексы графиков
                                )
@@ -115,7 +121,10 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
                             outputArrayCreate  # Функция постобработки выходных данных
                             ):
     # Считываем файл проекта
-    (integrateAttributes,  # Аттрибуты интегрирования
+    (ProjectsAttributes,
+
+     # Интегрирование
+     integrateAttributes,  # Аттрибуты интегрирования
 
      # Построение графиков
      indexesGraphics,  # Индексы графиков, которые нужно построить
@@ -124,10 +133,10 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
      modeAttributes,  # Аттрибуты режима
      dynamicParameters,  # Начальное состояние
      attributes,  # Аттрибуты
-     dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
 
-     # Имя файла динамики
-     DynamicFileNameBase,  # Файл csv
+     nMode,  # Число аттрибутов режима
+     dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+     nAttrs,  # Число аттрибутов
 
      # Имя файла параметров
      ParametersFileName,
@@ -137,7 +146,7 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
      ) = ReadProjectFileForModeling(ProjectFileName)
 
     # Получаем динамики системы
-    dynamicToCSV = DynamicToCSV(DynamicFileNameBase,  # Файл csv
+    dynamicToCSV = DynamicToCSV(ProjectsAttributes,  # Аттрибуты проекта
 
                                 sep,  # Разделитель csv
                                 dec  # Десятичный разделитель
@@ -145,7 +154,10 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
     allPars = SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режима
                                           dynamicParameters,  # Начальное состояние
                                           attributes,  # Аттрибуты
+
+                                          nMode,  # Число аттрибутов режима
                                           dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
+                                          nAttrs,  # Число аттрибутов
 
                                           # Аттрибуты интегрирования
                                           integDynamic,  # Интегратор динамики

@@ -26,11 +26,15 @@ def ReadModesAttributes(ProjectsAttributes,  # Аттрибуты проекта
                         sep,  # Разделитель csv
                         dec  # Десятичный разделитель
                         ):
-    # Имна файлов
+    # Имена файлов
     ModeAttributesFileName = ProjectsAttributes["ModeAttributesFileName"]  # Файл csv аттрибутов режима
 
-    # Считываем файл аттрибутов режима и выводим эти аттрибуты
-    return pd.read_csv(ModeAttributesFileName, sep=sep, decimal=dec)
+    # Считываем файл аттрибутов режима
+    modeAttributes = pd.read_csv(ModeAttributesFileName, sep=sep, decimal=dec)
+
+    # Выводим эти аттрибуты и их число
+    return (modeAttributes,
+            len(modeAttributes))
 
 
 # Считываем файл границ аттрибутов
@@ -76,20 +80,41 @@ def ReadDynamicParametersBorder(ProjectsAttributes,  # Аттрибуты про
 
 
 # Считываем аттрибуты интегрирования
-def ReadModelingDynamicAttributes(ProjectsAttributes,  # Аттрибуты проекта
+def ReadIntegrateAttributes(ProjectsAttributes,  # Аттрибуты проекта
 
-                                  # Десятичные разделители
-                                  sep,  # Разделитель csv
-                                  dec  # Десятичный разделитель
-                                  ):
+                            # Десятичные разделители
+                            sep,  # Разделитель csv
+                            dec  # Десятичный разделитель
+                            ):
     # Получаем аттрбуты
     IntegrateAttributesFileName = ProjectsAttributes["IntegrateAttributesFileName"]  # Файл csv аттрибутов интегрирования
-    IndexesGraphicsFileName = ProjectsAttributes["IndexesGraphicsFileName"]  # Файл csv индексов графиков, которые нужно построить
 
     # Считываем файлы аттрибутов
     integrateAttributes = pd.read_csv(IntegrateAttributesFileName, sep=sep, decimal=dec)  # Аттрибуты интегирования
+
+    # Вывыдим считанные аттрибуты
+    return integrateAttributes
+
+
+# Считываем аттрибуты интегрирования
+def ReadIndexesGraphics(ProjectsAttributes,  # Аттрибуты проекта
+
+                        # Десятичные разделители
+                        sep,  # Разделитель csv
+                        dec  # Десятичный разделитель
+                        ):
+    # Получаем аттрбуты
+    IndexesGraphicsFileName = ProjectsAttributes["IndexesGraphicsFileName"]  # Файл csv индексов графиков, которые нужно построить
+
+    # Считываем файлы аттрибутов
     indexesGraphics = pd.read_csv(IndexesGraphicsFileName, sep=sep, decimal=dec)  # Индексы графиков
 
     # Вывыдим считанные аттрибуты
-    return (integrateAttributes,
-            indexesGraphics)
+    return indexesGraphics
+
+
+# Считываем имя файла динамики
+def ReadDynamicFileName(ProjectsAttributes  # Аттрибуты проекта
+                        ):
+    # Получаем и выводим имя файла динамики
+    return ProjectsAttributes["DynamicFileName"]  # Файл csv динамики
