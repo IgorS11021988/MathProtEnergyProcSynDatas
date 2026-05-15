@@ -187,20 +187,3 @@ class DynamicToCSVAndPlot(DynamicToCSVAndPlotBase):
                          sep,  # Сепаратор CSV
                          dec  # Десятичный разделитель
                          )
-
-
-# Функция сохранения в файл
-def SavedFinction(dyn, index,
-
-                  saveDynamicFun,  # Функтор сохранения динамики
-
-                  outputArrayCreate  # Функция создания выходного массива
-                  ):
-    # Индекс
-    index += 1
-
-    # Сохраняем данные в файл
-    outputArrayCreate(dyn, index, saveDynamicFun)
-
-    # Возвращаем индекс
-    return index

@@ -1,11 +1,8 @@
 from MathProtEnergyProcSynDatas.File import ReadProjectFileForModeling
 
-from MathProtEnergyProcSynDatas.SystemStructure import SystemStructure
-
-from MathProtEnergyProc import CountDynamics
-
+from .SystemStructure import SystemStructure
 from .GetModelingParameters import GetModelingParameters
-from .Save import SavedFinction, DynamicToCSVAndPlot
+from .Save import DynamicToCSVAndPlot
 
 from pandas import DataFrame, concat
 
@@ -20,21 +17,13 @@ def SystemDynamicsModelingBase(modeAttributes,  # Аттрибуты режим�
                                nAttrs,  # Число аттрибутов
 
                                # Интегрирование
-                               integDynamic,  # Интегратор динамики
                                integrateAttributes,  # Аттрибуты интегрирования
-
-                               # Функция класса системы
-                               structureFunction,  # Функция структуры системы
-                               constParametersFunction,  # Функция постоянных параметров системы
-                               characteristicsFunction,  # Функция характеристик системы
-                               conditionsFunction,  # Функция условий протекания процессов
 
                                # Функции обработки
                                inputArrayCreate,  # Функция предобработки входных данных
-                               outputArrayCreate,  # Функция постобработки выходных данных
 
-                               # Имя функции сохранения динамики
-                               saveDynamicFun  # Функтор сохранения динамики
+                               # Класс системы и ее динамик
+                               sysDyns
                                ):
     # Получаем параметры моделировния
     (Pars,  # Параметры
@@ -60,26 +49,6 @@ def SystemDynamicsModelingBase(modeAttributes,  # Аттрибуты режим�
 
                             integrateAttributes  # Аттрибуты интегрирования
                             )
-
-    # Функция сохранения в файл
-    def savedFinction(dyn, index):
-        # Сохраняем в файл и возвращаем индекс
-        return SavedFinction(dyn, index,
-
-                             saveDynamicFun,  # Функтор сохранения динамики
-
-                             outputArrayCreate  # Функция создания выходного массива
-                             )
-
-    # Динамика системы
-    sysDyn = SystemStructure(structureFunction,  # Функция структуры системы
-                             constParametersFunction,  # Функция постоянных параметров системы
-                             characteristicsFunction,  # Функция характеристик системы
-                             conditionsFunction,  # Функция условий протекания процессов
-
-                             integDynamic  # Метод интегрирования динамики
-                             )
-    sysDyns = CountDynamics(sysDyn, savedFinction)  # Класс динамик системы
 
     # Моделируем динамики
     indexes = sysDyns.ComputingExperiment(Tints,
@@ -140,6 +109,19 @@ def SystemDynamicsModeling(ProjectFileName,  # Имя файла проекта
                                        sep,  # Сепаратор CSV
                                        dec  # Десятичный разделитель
                                        )
+    sysDyns = SystemStructure(structureFunction,  # Функция структуры системы
+                              constParametersFunction,  # Функция постоянных параметров системы
+                              characteristicsFunction,  # Функция характеристик системы
+                              conditionsFunction,  # Функция условий протекания процессов
+
+                              integDynamic,  # Метод интегрирования динамики
+
+                              # Функции обработки
+                              outputArrayCreate,  # Функция постобработки выходных данных
+
+                              # Имя функции сохранения динамики
+                              dynamicToCSV  # Функтор сохранения динамики
+                              )  # Класс динамик системы
     allPars = SystemDynamicsModelingBase(modeAttributes,  # Аттрибуты режима
                                          dynamicParameters,  # Начальное состояние
                                          attributes,  # Аттрибуты
@@ -149,21 +131,13 @@ def SystemDynamicsModeling(ProjectFileName,  # Имя файла проекта
                                          nAttrs,  # Число аттрибутов
 
                                          # Интегрирование
-                                         integDynamic,  # Интегратор динамики
-                                         integrateAttributes,  # Прочие аттрибуты интегрирования
-
-                                         # Функция класса системы
-                                         structureFunction,  # Функция структуры системы
-                                         constParametersFunction,  # Функция постоянных параметров системы
-                                         characteristicsFunction,  # Функция характеристик системы
-                                         conditionsFunction,  # Функция условий протекания процессов
+                                         integrateAttributes,  # Аттрибуты интегрирования
 
                                          # Функции обработки
                                          inputArrayCreate,  # Функция предобработки входных данных
-                                         outputArrayCreate,  # Функция постобработки выходных данных
 
-                                         # Имя файла динамики
-                                         dynamicToCSV  # Функтор сохранения динамики
+                                         # Класс системы и ее динамик
+                                         sysDyns
                                          )
 
     # Сохраняем параметры

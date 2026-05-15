@@ -1,28 +1,34 @@
 from MathProtEnergyProcSynDatas.File import ReadProjectFileForGenerateModelParameters
 from MathProtEnergyProcSynDatas.File import ReadProjectFileForGenerateAttributes
 from MathProtEnergyProcSynDatas.File import ReadProjectFileForGenerateDynamicParameters
-from MathProtEnergyProcSynDatas.DatasGenerate import GenerateRandomDatasInDiapasonsFrame
+
+from .DatasGenerate import GenerateRandomDatasInDiapasons
 
 from .GetModelingParameters import GetNDynamics
 
 import numpy as np
+from pandas import DataFrame
 
 
-# Генерируем начальные состояния
-def RandomGenerateDynamicParametersFunction(dynamicParametersBorder,  # Границы динамических параметров
-                                            dynamicParametersNPoints  # Числа динамических параметров в соответствующих границах
-                                            ):
-    # Генерируем значения параметров динамики
-    dynamicParameters = GenerateRandomDatasInDiapasonsFrame(dynamicParametersBorder,
-                                                            dynamicParametersNPoints)
+# Генерация локально-равномерно распределенных величин из фрейма
+def GenerateRandomDatasInDiapasonsFrame(borderValues,  # Границы генерируемых величин
+                                        nPoints=1  # Числа точек в соответствующих диапазонах
+                                        ):
+    # Получаем заголовок величин
+    namesValues = list(borderValues)
 
-    # Перемешиваем случайно строки
-    dynamicParametersValues = dynamicParameters.to_numpy()
-    np.random.shuffle(dynamicParametersValues)
-    dynamicParameters[:] = dynamicParametersValues
+    # Получаем границы из фрейма
+    minValues = borderValues.loc[0::2].to_numpy()  # Минимумы
+    maxValues = borderValues.loc[1::2].to_numpy()  # Максимумы
 
-    # Выводим результат
-    return dynamicParameters
+    # Генерируем случайные значения
+    values = GenerateRandomDatasInDiapasons(minValues,  # Минимальные значения величин
+                                            maxValues,  # Максимальные значения величин
+                                            nPoints=nPoints  # Числа точек в соответствующих диапазонах
+                                            )
+
+    # Выводим фрейм сгенерированных величин
+    return DataFrame(values, columns=namesValues)
 
 
 def RandomGenerateDynamicParametersBase(attributesNPoints,  # Число точек аттрибутов
@@ -37,10 +43,17 @@ def RandomGenerateDynamicParametersBase(attributesNPoints,  # Число точ�
                                             dynamicParametersNDyblicates  # Число состояний, определяющих конкретную динамику
                                             )
 
-    # Генерируем и выводим значения параметров динамики
-    return RandomGenerateDynamicParametersFunction(dynamicParametersBorder,  # Границы динамических параметров
-                                                   dynamicParametersNPoints  # Числа динамических параметров в соответствующих границах
-                                                   )
+    # Генерируем значения параметров динамики
+    dynamicParameters = GenerateRandomDatasInDiapasonsFrame(dynamicParametersBorder,
+                                                            dynamicParametersNPoints)
+
+    # Перемешиваем случайно строки
+    dynamicParametersValues = dynamicParameters.to_numpy()
+    np.random.shuffle(dynamicParametersValues)
+    dynamicParameters[:] = dynamicParametersValues
+
+    # Выводим результат
+    return dynamicParameters
 
 
 # Генерация аттрибутов и начального состояния

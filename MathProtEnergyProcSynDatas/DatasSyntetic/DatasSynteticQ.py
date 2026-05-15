@@ -1,11 +1,8 @@
 from MathProtEnergyProcSynDatas.File import ReadProjectFileForModeling
 
-from MathProtEnergyProcSynDatas.SystemStructure import SystemStructureQ
-
-from MathProtEnergyProc import CountDynamicsQ
-
+from .SystemStructure import SystemStructureQ
 from .GetModelingParameters import GetModelingParameters
-from .Save import SavedFinction, DynamicToCSVAndPlot
+from .Save import DynamicToCSVAndPlot
 
 from pandas import DataFrame, concat
 
@@ -20,21 +17,13 @@ def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режим
                                 nAttrs,  # Число аттрибутов
 
                                 # Интегрирование
-                                integDynamic,  # Интегратор динамики
                                 integrateAttributes,  # Аттрибуты интегрирования
-
-                                # Функция класса системы
-                                structureFunctionQ,  # Функция структуры системы
-                                constParametersFunctionQ,  # Функция постоянных параметров системы
-                                characteristicsFunction,  # Функция характеристик системы
-                                conditionsFunction,  # Функция условий протекания процессов
 
                                 # Функции обработки
                                 inputArrayCreateQ,  # Функция предобработки входных данных
-                                outputArrayCreate,  # Функция постобработки выходных данных
 
-                                # Имя функции сохранения динамики
-                                saveDynamicFun  # Функтор сохранения динамики
+                                # Класс системы и ее динамик
+                                sysDyns
                                 ):
     # Получаем параметры моделировния
     (Pars,  # Параметры
@@ -61,26 +50,6 @@ def SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режим
 
                              integrateAttributes  # Аттрибуты интегрирования
                              )
-
-    # Функция сохранения в файл
-    def savedFinction(dyn, index):
-        # Сохраняем в файл и возвращаем индекс
-        return SavedFinction(dyn, index,
-
-                             saveDynamicFun,  # Функтор сохранения динамики
-
-                             outputArrayCreate  # Функция создания выходного массива
-                             )
-
-    # Динамика системы
-    sysDyn = SystemStructureQ(structureFunctionQ,  # Функция структуры системы
-                              constParametersFunctionQ,  # Функция постоянных параметров системы
-                              characteristicsFunction,  # Функция характеристик системы
-                              conditionsFunction,  # Функция условий протекания процессов
-
-                              integDynamic  # Метод интегрирования динамики
-                              )
-    sysDyns = CountDynamicsQ(sysDyn, savedFinction)  # Класс динамик системы
 
     # Моделируем динамики
     indexes = sysDyns.ComputingExperimentQ(Tints,
@@ -142,6 +111,19 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
                                        sep,  # Сепаратор CSV
                                        dec  # Десятичный разделитель
                                        )
+    sysDyns = SystemStructureQ(structureFunctionQ,  # Функция структуры системы
+                               constParametersFunctionQ,  # Функция постоянных параметров системы
+                               characteristicsFunction,  # Функция характеристик системы
+                               conditionsFunction,  # Функция условий протекания процессов
+
+                               integDynamic,  # Метод интегрирования динамики
+
+                               # Функции обработки
+                               outputArrayCreate,  # Функция постобработки выходных данных
+
+                               # Имя функции сохранения динамики
+                               dynamicToCSV  # Функтор сохранения динамики
+                               )  # Класс динамик системы
     allPars = SystemDynamicsModelingBaseQ(modeAttributes,  # Аттрибуты режима
                                           dynamicParameters,  # Начальное состояние
                                           attributes,  # Аттрибуты
@@ -150,22 +132,14 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
                                           dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
                                           nAttrs,  # Число аттрибутов
 
-                                          # Аттрибуты интегрирования
-                                          integDynamic,  # Интегратор динамики
-                                          integrateAttributes,  # Прочие аттрибуты интегрирования
-
-                                          # Функция класса системы
-                                          structureFunctionQ,  # Функция структуры системы
-                                          constParametersFunctionQ,  # Функция постоянных параметров системы
-                                          characteristicsFunction,  # Функция характеристик системы
-                                          conditionsFunction,  # Функция условий протекания процессов
+                                          # Интегрирование
+                                          integrateAttributes,  # Аттрибуты интегрирования
 
                                           # Функции обработки
                                           inputArrayCreateQ,  # Функция предобработки входных данных
-                                          outputArrayCreate,  # Функция постобработки выходных данных
 
-                                          # Имя файла динамики
-                                          dynamicToCSV  # Функтор сохранения динамики
+                                          # Класс системы и ее динамик
+                                          sysDyns
                                           )
 
     # Сохраняем параметры
