@@ -76,7 +76,8 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
 
                             # Функции обработки
                             inputArrayCreateQ,  # Функция предобработки входных данных
-                            outputArrayCreate  # Функция постобработки выходных данных
+                            outputArrayCreate,  # Функция постобработки выходных данных
+                            PostModeling  # Функция обработки рзультатов моделирования
                             ):
     # Считываем файл проекта
     (ProjectsAttributes,
@@ -93,8 +94,8 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
      dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
      nAttrs,  # Число аттрибутов
 
-     # Имя файла параметров
-     ParametersFileName,
+     # Путь к результату
+     PathResult,
 
      sep,  # Разделитель csv
      dec  # Десятичный разделитель
@@ -142,10 +143,12 @@ def SystemDynamicsModelingQ(ProjectFileName,  # Имя файла проекта
                                           sysDyns
                                           )
 
-    # Сохраняем параметры
-    allPars.to_csv(ParametersFileName,
-                   sep=sep, decimal=dec,
-                   index=False)
+    # Обрабатываем результаты моделирования и возвращаем результат
+    return PostModeling(allPars,  # Параметры моделирования с индексами
+                        dynamicToCSV,  # Функтор сохранения динамики
+                        PathResult,  # Путь к результатам
 
-    # Возвращаем полученные динамики и параметры
-    return (allPars, dynamicToCSV)
+                        # Файл CSV
+                        sep,  # Сепаратор CSV
+                        dec  # Десятичный разделитель
+                        )

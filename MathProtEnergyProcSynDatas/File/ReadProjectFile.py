@@ -11,7 +11,7 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
      sep, dec) = ReadProjectStructure(ProjectFileName)
 
     # Имя файла
-    ParametersFileName = ProjectsAttributes["ParametersFileName"]  # Файл csv параметров
+    PathResult = ProjectsAttributes["PathResult"]  # Путь к результату
     DynamicParametersFileName = ProjectsAttributes["DynamicParametersFileName"]  # Файл csv начального состояния аккумулятора
     AttributesFileName = ProjectsAttributes["AttributesFileName"]  # Файл csv аттрибутов аккумулятора
     dynamicParametersNDyblicates = ProjectsAttributes["DynamicParametersNDyblicates"]  # Число дубликаций начального состояния аккумулятора на каждый режим работы
@@ -45,8 +45,8 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
             dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
             nAttrs,  # Число аттрибутов
 
-            # Имя файла параметров
-            ParametersFileName,
+            # Путь к результату
+            PathResult,
 
             sep,  # Разделитель csv
             dec  # Десятичный разделитель

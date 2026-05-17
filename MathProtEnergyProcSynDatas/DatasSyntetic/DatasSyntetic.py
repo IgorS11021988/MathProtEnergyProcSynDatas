@@ -74,7 +74,8 @@ def SystemDynamicsModeling(ProjectFileName,  # Имя файла проекта
 
                            # Функции обработки
                            inputArrayCreate,  # Функция предобработки входных данных
-                           outputArrayCreate  # Функция постобработки выходных данных
+                           outputArrayCreate,  # Функция постобработки выходных данных
+                           PostModeling  # Функция обработки рзультатов моделирования
                            ):
     # Считываем файл проекта
     (ProjectsAttributes,
@@ -91,8 +92,8 @@ def SystemDynamicsModeling(ProjectFileName,  # Имя файла проекта
      dynamicParametersNDyblicates,  # Число дубликаций динамик с разными параметрами
      nAttrs,  # Число аттрибутов
 
-     # Имя файла параметров
-     ParametersFileName,
+     # Путь к результату
+     PathResult,
 
      sep,  # Разделитель csv
      dec  # Десятичный разделитель
@@ -140,7 +141,12 @@ def SystemDynamicsModeling(ProjectFileName,  # Имя файла проекта
                                          sysDyns
                                          )
 
-    # Сохраняем параметры
-    allPars.to_csv(ParametersFileName,
-                   sep=sep, decimal=dec,
-                   index=False)
+    # Обрабатываем результаты моделирования и возвращаем результат
+    return PostModeling(allPars,  # Параметры моделирования с индексами
+                        dynamicToCSV,  # Функтор сохранения динамики
+                        PathResult,  # Путь к результатам
+
+                        # Файл CSV
+                        sep,  # Сепаратор CSV
+                        dec  # Десятичный разделитель
+                        )
