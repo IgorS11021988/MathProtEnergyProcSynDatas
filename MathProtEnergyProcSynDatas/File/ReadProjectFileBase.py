@@ -37,6 +37,24 @@ def ReadModesAttributes(ProjectsAttributes,  # Аттрибуты проекта
             len(modeAttributes))
 
 
+# Считывание файла аттрибутов оптимизационных режима
+def ReadOptimizeModesAttributes(ProjectsAttributes,  # Аттрибуты проекта
+
+                                # Десятичные разделители
+                                sep,  # Разделитель csv
+                                dec  # Десятичный разделитель
+                                ):
+    # Имена файлов
+    OptimizeModeAttributesFileName = ProjectsAttributes["OptimizeModeAttributesFileName"]  # Файл csv аттрибутов режима
+
+    # Считываем файл аттрибутов режима
+    optimizeModeAttributes = pd.read_csv(OptimizeModeAttributesFileName, sep=sep, decimal=dec)
+
+    # Выводим эти аттрибуты и их число
+    return (optimizeModeAttributes,
+            len(optimizeModeAttributes))
+
+
 # Считываем файл границ аттрибутов
 def ReadAttributesBorders(ProjectsAttributes,  # Аттрибуты проекта
 
@@ -94,6 +112,24 @@ def ReadIntegrateAttributes(ProjectsAttributes,  # Аттрибуты проек
 
     # Вывыдим считанные аттрибуты
     return integrateAttributes
+
+
+# Считываем аттрибуты интегрирования для оптимизации
+def ReadOptimizeIntegrateAttributes(ProjectsAttributes,  # Аттрибуты проекта
+
+                                    # Десятичные разделители
+                                    sep,  # Разделитель csv
+                                    dec  # Десятичный разделитель
+                                    ):
+    # Получаем аттрбуты
+    OptimizeIntegrateAttributesFileName = ProjectsAttributes["OptimizeIntegrateAttributesFileName"]  # Файл csv аттрибутов интегрирования
+
+    # Считываем файлы аттрибутов
+    integrateAttributesOptimize = pd.read_csv(OptimizeIntegrateAttributesFileName,
+                                              sep=sep, decimal=dec)  # Аттрибуты интегирования
+
+    # Вывыдим считанные аттрибуты
+    return integrateAttributesOptimize
 
 
 # Считываем аттрибуты интегрирования

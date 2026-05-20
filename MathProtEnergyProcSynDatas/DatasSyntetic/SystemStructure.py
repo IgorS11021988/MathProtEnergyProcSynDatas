@@ -1,13 +1,20 @@
-from MathProtEnergyProc import NonEqSystemQ, NonEqSystem, NonEqSystemQDyn, NonEqSystemDyn, CountDynamics, CountDynamicsQ
+from MathProtEnergyProc import (
+    NonEqSystemQ,
+    NonEqSystem,
+    NonEqSystemQDyn,
+    NonEqSystemDyn,
+    CountDynamics,
+    CountDynamicsQ
+)
 
 
 # Функция сохранения в файл
-def SavedFinction(dyn, index,
+def _SavedFinction(dyn, index,
 
-                  saveDynamicFun,  # Функтор сохранения динамики
+                   saveDynamicFun,  # Функтор сохранения динамики
 
-                  outputArrayCreate  # Функция создания выходного массива
-                  ):
+                   outputArrayCreate  # Функция создания выходного массива
+                   ):
     # Индекс
     index += 1
 
@@ -44,12 +51,12 @@ def SystemStructureQ(structureFunctionQ,  # Функция структуры с
     # Функция сохранения выходных параметров
     def savedFinction(dyn, index):
         # Сохраняем в файл и возвращаем индекс
-        return SavedFinction(dyn, index,
+        return _SavedFinction(dyn, index,
 
-                             saveDynamicFun,  # Функтор сохранения динамики
+                              saveDynamicFun,  # Функтор сохранения динамики
 
-                             outputArrayCreate  # Функция создания выходного массива
-                             )
+                              outputArrayCreate  # Функция создания выходного массива
+                              )
 
     # Задаем и возвращаем класс динамики системы
     sysDyn = NonEqSystemQDyn(sysStructureQ,  # Система
@@ -86,12 +93,12 @@ def SystemStructure(structureFunction,  # Функция структуры си
     # Функция сохранения выходных параметров
     def savedFinction(dyn, index):
         # Сохраняем в файл и возвращаем индекс
-        return SavedFinction(dyn, index,
+        return _SavedFinction(dyn, index,
 
-                             saveDynamicFun,  # Функтор сохранения динамики
+                              saveDynamicFun,  # Функтор сохранения динамики
 
-                             outputArrayCreate  # Функция создания выходного массива
-                             )
+                              outputArrayCreate  # Функция создания выходного массива
+                              )
 
     # Задаем и возвращаем класс динамики системы
     sysDyn = NonEqSystemDyn(sysStructure,  # Система

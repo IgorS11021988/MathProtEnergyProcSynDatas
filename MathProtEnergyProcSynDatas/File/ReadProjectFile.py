@@ -1,6 +1,14 @@
 import pandas as pd
 
-from .ReadProjectFileBase import ReadProjectStructure, ReadModesAttributes, ReadAttributesBorders, ReadDynamicParametersBorder, ReadIntegrateAttributes
+from .ReadProjectFileBase import (
+    ReadProjectStructure,
+    ReadModesAttributes,
+    ReadOptimizeModesAttributes,
+    ReadAttributesBorders,
+    ReadDynamicParametersBorder,
+    ReadIntegrateAttributes,
+    ReadOptimizeIntegrateAttributes
+)
 
 
 # Считывание файла проекта для моделирования
@@ -47,6 +55,53 @@ def ReadProjectFileForModeling(ProjectFileName  # Имя файла проект
 
             # Путь к результату
             PathResult,
+
+            sep,  # Разделитель csv
+            dec  # Десятичный разделитель
+            )
+
+
+# Считывание файла проекта для моделирования в целях оптимизации
+def ReadProjectFileForOptimizeModeling(ProjectFileName  # Имя файла проекта
+                                       ):
+    # Открываем файл проекта
+    (ProjectsAttributes,
+     sep, dec) = ReadProjectStructure(ProjectFileName)
+
+    # Считываем файл аттрибутов интегрирования динамики
+    integrateAttributesOptimize = ReadOptimizeIntegrateAttributes(ProjectsAttributes, sep, dec)
+
+    # Считываем файл аттрибутов
+    (optimizeModeAttributes,
+     nOptimizeModes) = ReadOptimizeModesAttributes(ProjectsAttributes, sep, dec)
+
+    # Считываем файлы границ
+    (dynamicParametersBorder,
+     dynamicParametersNDyblicates) = ReadDynamicParametersBorder(ProjectsAttributes, sep, dec)  # Границы начального состояния
+    (attributesBorder,
+     attributesNPoints) = ReadAttributesBorders(ProjectsAttributes, sep, dec)  # Границы аттрибутов
+
+    # Исходные данные
+    PathResultOptimize = ProjectsAttributes["PathResultOptimize"]  # Путь к результату
+
+    # Выводим результат
+    return (ProjectsAttributes,
+
+            # Интегрирование
+            integrateAttributesOptimize,  # Аттрибуты интегрирования
+
+            # Аттрибуты
+            optimizeModeAttributes,  # Аттрибуты оптимизационных режимов
+
+            attributesBorder,  # Границы аттрибутов
+            dynamicParametersBorder,  # Границы начального состояния
+
+            attributesNPoints,  # Число точек аттрибутов
+            nOptimizeModes,  # Число режимов работы
+            dynamicParametersNDyblicates,  # Число состояний, определяющих конкретную динамику
+
+            # Путь к результату
+            PathResultOptimize,
 
             sep,  # Разделитель csv
             dec  # Десятичный разделитель
